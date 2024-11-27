@@ -1,0 +1,247 @@
+﻿@{
+    ViewData["Title"] = "Station";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Station</h1>
+
+    <div class="container" id="stationManager">
+
+        <div>
+            <button v-for="stationgroup in stationgroups" :key="stationgroup.id"
+                v-on:click="joinGroup(stationgroup.name)">
+                {{ stationgroup.name }}
+            </button>
+            <div>
+                <p id="stationGroupLabel">Current Station Group: <span id="stationGroupValue"></span>{{ stationGroupName }}
+                </p>
+            </div>
+
+            <div>
+                <label for="categoryFilter">Filter by Category:</label>
+                <div v-for="category in categories" :key="category.id">
+                    <input type="checkbox" v-model="selectedCategories" :value="category.id">
+                    <label for="categoryFilter">{{ category.name }}</label>
+                </div>
+            </div>
+
+            <div>
+                <!-- Tabs -->
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link" :class="{ active: currentTab === 'current' }" href="#"
+                            v-on:click="currentTab = 'current'">Current Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" :class="{ active: currentTab === 'completed' }" href="#"
+                            v-on:click="currentTab = 'completed'">Completed</a>
+                    </li>
+                </ul>
+
+                <!-- Current Orders -->
+                <div v-if="currentTab === 'current'" class="d-flex flex-row flex-wrap">
+                    <div class="card" v-for="order in currentOrders" :key="order.id"
+                        style="max-width: 18rem; margin-right: 10px;">
+                        <!-- Card content for current orders -->
+                        <div class="card-header" v-bind:class="{'preparing': order.status === 'Preparing'}">Order No.: {{ order.Source }} {{ order.id }} {{ order.order }}</div>
+                        <div class="card-body">
+                            <p class="card-text">{{ order.order }}</p>
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between align-items-center"
+                                    v-for="item in filteredOrderItems(order)">
+                                    {{ item.title }}
+                                    <span >   </span>
+                                    <span class="badge badge-primary badge-pill">{{ item.quantity }}</span>
+                                </li>
+                            </ul>
+                            <span>Special Req:</span>
+                            <span>
+                                {{order.notes}}
+                            </span>
+                            <br />
+                            <button v-on:click="prepareOrder(order)" class="btn btn-success">Prepare</button>
+                            <button v-on:click="completeOrder(order)" class="btn btn-primary">Complete</button>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">Last updated {{ order.lastUpdated }}</small>
+                        </div>
+                        <!-- ... -->
+                    </div>
+                </div>
+
+                <!-- Completed Orders -->
+                <div v-if="currentTab === 'completed'" class="d-flex flex-row flex-wrap">
+                    <div class="card" v-for="order in completedOrders" :key="order.id"
+                        style="max-width: 18rem; margin-right: 10px;">
+                        <!-- Card content for completed orders -->
+                        <div class="card-header">Order No.: {{ order.Source }} {{ order.id }} {{ order.order }}</div>
+                        <div class="card-body">
+                            <p class="card-text">{{ order.order }}</p>
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between align-items-center"
+                                    v-for="item in order.orderItems">
+                                    {{ item.title }}
+                                    <span class="badge badge-primary badge-pill">{{ item.quantity }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">Last updated {{ order.lastUpdated }}</small>
+                        </div>
+                        <!-- ... -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script>
+            const stationManager = new Vue({
+                el: '#stationManager',
+                data: {
+                    stationgroups: [],
+                    stationGroupName: "",
+                    currentTab: 'current',
+                    orders: [],
+
+                    categories: [],
+                    selectedCategories: [],
+                },
+                computed: {
+                    filteredOrderItems() {
+                        return (order) => {
+                            if (this.selectedCategories.length === 0) {
+                                return order.orderItems;
+                            } else {
+                                return order.orderItems.filter((item) => this.selectedCategories.includes(item.categoryID));
+                            }
+                        };
+                    },
+                    currentOrders() {
+                        return this.orders.filter(order => order.stationGroup.name === this.stationGroupName && order.status !== 'Completed');
+                    },
+                    completedOrders() {
+                        return this.orders.filter(order => order.stationGroup.name === this.stationGroupName && order.status === 'Completed');
+                    },
+                },
+                async created() {
+                    await this.startConnection();
+                    this.fetchStationGroups();
+                    this.fetchCategories();
+
+                    @* setInterval(() => { this.$forceUpdate(); }, 1000); *@
+                    setInterval(() => {
+                        this.orders.forEach((order) => {
+                            this.$set(order, 'lastUpdated', this.calculateTimeSinceLastUpdated(order.timestamp));
+                        });
+                    }, 1000);
+                },
+                methods: {
+                    async startConnection() {
+                        try {
+                            await connection.start();
+                        } catch (error) {
+                            console.error("Error starting SignalR connection:", error);
+                        }
+                    },
+                    fetchStationGroups() {
+                        fetch('https://localhost:9000/api/stationgroups')
+                            .then(response => response.json())
+                            .then(data => {
+                                this.stationgroups = data;
+                                
+                                if (this.stationgroups.length > 0) {
+                                    this.joinGroup(this.stationgroups[0].name);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error fetching station groups:', error);
+                            });
+                    },
+                    fetchCategories() {
+                        fetch('https://localhost:9000/api/categories')
+                            .then(response => response.json())
+                            .then(data => {
+                                this.categories = data;
+                            })
+                            .catch((error) => {
+                                console.error('Error fetching products:', error);
+                            });
+                    },
+                    fetchOrders() {
+                        fetch('https://localhost:9000/api/purchaseorders')
+                            .then(response => response.json())
+                            .then(data => {
+                                this.orders = data;
+                            })
+                            .catch(error => {
+                                console.error('Error fetching station groups:', error);
+                            });
+                    },
+                    joinGroup(groupName) {
+                        this.stationGroupName = groupName;
+                        connection.invoke("SubscribeStation", groupName).catch(function (err) {
+                            console.error(err.toString());
+                        });
+                        this.orders = [];
+                        this.fetchOrders();
+                    },
+                    prepareOrder(order) {
+                        order.status = "Preparing";
+                        connection.invoke("NotifyClients", order).catch(function (err) {
+                            return console.error(err.toString());
+                        });
+                    },
+                    completeOrder(order) {
+                        order.status = "Completed";
+                        connection.invoke("NotifyClients", order).catch(function (err) {
+                            return console.error(err.toString());
+                        });
+                    },
+                    calculateTimeSinceLastUpdated(timestampUtc) {
+                        const currentTime = new Date();
+                        const orderTime = new Date(timestampUtc);
+
+                        const localTimezoneOffset = currentTime.getTimezoneOffset();
+                        orderTime.setMinutes(orderTime.getMinutes() - localTimezoneOffset);
+
+                        const timeDifference = currentTime - orderTime;
+                        const minutes = Math.floor(timeDifference / (1000 * 60));
+                        const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+                        return `${minutes} mins ${seconds} secs ago`;
+                    }
+
+                },
+            });
+
+            connection.on("UpdateStation", function (order) {
+                console.log(order);
+                if (order.stationGroup.name == stationManager.stationGroupName) {
+                    // Find the index of the existing order in the orders array
+                    const existingOrderIndex = stationManager.orders.findIndex(
+                        (existingOrder) => existingOrder.id === order.id
+                    );
+                    if (existingOrderIndex !== -1) {
+                        // If the order already exists, replace it with the updated order
+                        Vue.set(stationManager.orders, existingOrderIndex, order);
+                    } else {
+                        // If the order does not exist, add it to the orders array
+                        stationManager.orders.push(order);
+                    }
+                }
+            });
+        </script>
+    }
+    <style>
+        .badge-primary {
+            background-color: #007bff;
+            /* Bootstrap primary color */
+            color: #fff;
+            /* White text */
+        }
+
+        .preparing {
+            background-color: #198754;
+        }
+    </style>

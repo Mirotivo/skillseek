@@ -1,0 +1,51 @@
+@{
+    ViewData["Title"] = "MnistPrediction";
+}
+
+<div id="app">
+    <h1>MNIST Image Prediction</h1>
+    <input type="file" ref="fileInput" accept=".png, .jpg, .jpeg" v-on:change="onFileChange" />
+    <button v-on:click="predict">Predict</button>
+    <div v-if="predictionResult !== null">
+        <p>Predicted number: {{ predictionResult }}</p>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data: {
+                selectedFile: null,
+                predictionResult: null
+            },
+            methods: {
+                onFileChange(event) {
+                    this.selectedFile = event.target.files[0];
+                },
+                async predict() {
+                    if (this.selectedFile) {
+                        const formData = new FormData();
+                        formData.append('file', this.selectedFile);
+
+                        try {
+                            const response = await fetch('https://localhost:9000/api/models/mnist', {
+                                method: 'POST',
+                                body: formData
+                            });
+
+                            if (response.ok) {
+                                const prediction = await response.text();
+                                this.predictionResult = prediction;
+                            } else {
+                                console.error('Prediction failed.');
+                            }
+                        } catch (error) {
+                            console.error('An error occurred while making the prediction request.', error);
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

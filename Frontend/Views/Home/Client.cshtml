@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Client";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Client</h1>
+
+    <div>
+        <input type="text" id="poIDInput" placeholder="Enter order number">
+        <button id="subscribeButton">Check</button>
+    </div>
+    <div>
+        <p id="orderStatusLabel">Current Status: <span id="orderStatusValue"></span></p>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        connection.start().then(function () {
+            // Connection to the hub is established
+            // Check if the "poID" query parameter is present in the URL
+            var urlParams = new URLSearchParams(window.location.search);
+            var poIDParam = urlParams.get("poID");
+            
+            if (poIDParam) {
+                // If "poID" parameter exists, populate it in the input field
+                document.getElementById("poIDInput").value = poIDParam;
+                
+                // Automatically trigger the "Check" button click
+                document.getElementById("subscribeButton").click();
+            }
+        });
+
+        connection.on("UpdateClient", function (po) {
+            console.log(po);
+            var id = po.id;
+            var orderStatusValueElement = document.getElementById("orderStatusValue");
+            orderStatusValueElement.textContent = po.status;
+        });
+
+        document.getElementById("subscribeButton").addEventListener("click", function () {
+            var poID = document.getElementById("poIDInput").value;
+
+            // Check if the poID is valid (numeric) before subscribing
+            if (!isNaN(poID) && poID !== "") {
+                connection.invoke("SubscribeClient", parseInt(poID)).catch(function (err) {
+                    return console.error(err.toString());
+                });
+                console.log("Subscribed to PO ID: " + poID);
+            } else {
+                console.log("Invalid PO ID.");
+            }
+        });
+    </script>
+}

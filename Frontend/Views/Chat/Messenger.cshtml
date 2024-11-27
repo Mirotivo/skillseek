@@ -1,0 +1,399 @@
+@{
+  ViewData["Title"] = "Messenger";
+}
+
+<div id="app">
+
+  <div class="container">
+    <div class="row">
+      <!-- Side menu for friend list -->
+      <div class="col-md-3">
+        <div class="text-center">
+          <h2>Friends</h2>
+          <ul v-if="friends && friends.length > 0">
+            <li v-for="friend in friends" :key="friend.id">
+              <span
+                v-if="friendIsActive(friend)"
+                :class="{ 'clickable-email': friendIsActive(friend) }"
+                v-on:click="selectFriend(friend)">
+                {{ friend.email }}
+              </span>
+              <span v-else>{{ friend.email }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Display selected friend to the right -->
+      <div class="col-md-9">
+        <div v-show="selectedFriend">
+          <video id="localVideo" playsinline autoplay muted></video>
+          <video id="remoteVideo" playsinline autoplay></video>
+
+          <div class="box">
+            <button id="startButton" v-on:click="startButtonClicked" v-bind:disabled="startButtonDisabled">Start</button>
+            <button id="hangupButton" v-on:click="hangupButtonClicked" v-bind:disabled="hangupButtonDisabled">Hang Up</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<style>
+  .clickable-email {
+    cursor: pointer;
+    color: blue;
+  }
+</style>
+
+@section Scripts {
+    <script>
+      async function authFetch({ url, method = 'GET', data, headers = {} }) {
+          const token = localStorage.getItem('token');
+
+          headers = {
+              'Content-Type': 'application/json',
+              ...headers,
+          };
+
+          if (token) {
+              headers['Authorization'] = `Bearer ${token}`;
+          }
+
+          const options = {
+              method,
+              headers,
+              body: data ? JSON.stringify(data) : undefined,
+          };
+
+          try {
+              const response = await fetch(url, options);
+
+              if (response.ok) {
+                  return await response.json();
+              } else {
+                  const returnUrl = window.location.pathname + window.location.search;
+                  window.location.href = `/chat/login?returnUrl=${encodeURIComponent(returnUrl)}`;
+                  throw new Error('Request failed');
+              }
+          } catch (error) {
+              const returnUrl = window.location.pathname + window.location.search;
+              window.location.href = `/chat/login?returnUrl=${encodeURIComponent(returnUrl)}`;
+              throw new Error(error.message);
+          }
+      };
+  </script>
+  <script>
+    var connection = new signalR.HubConnectionBuilder()
+      .withUrl("https://localhost:9000/webrtc", { accessTokenFactory: () => localStorage.getItem('token') })
+      .build();
+  </script>
+  <script>
+    const app = new Vue({
+      el: '#app',
+      data: {
+        localStream: null,
+        localVideoElement: null,
+        remoteVideoElement: null,
+
+        pc: null,
+
+        configuration: {},
+
+        status: 'idle',
+        Email: 'Amr',
+        activeUsers: [],
+
+        friends: [],
+        selectedFriend: null,
+      },
+      computed: {
+        startButtonDisabled() {
+          return !(this.status === 'idle');
+        },
+        hangupButtonDisabled() {
+          return !(this.status === 'called');
+        },
+        friendIsActive() {
+          return (friend) => this.activeUsers.includes(friend.email);
+        },
+      },
+      mounted() {
+        this.status = 'idle';
+        this.localVideoElement = document.getElementById('localVideo');
+        this.remoteVideoElement = document.getElementById('remoteVideo');
+        connection.start().then(function () {
+          app.RegisterEvents();
+          app.fetchFriends();
+        });
+      },
+      methods: {
+        RegisterEvents() {
+          this.localVideoElement.addEventListener('loadedmetadata', function () {
+            console.log(`Local video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
+          });
+
+          this.remoteVideoElement.addEventListener('loadedmetadata', function () {
+            console.log(`Remote video videoWidth: ${this.videoWidth}px,  videoHeight: ${this.videoHeight}px`);
+          });
+
+          // Handle "OnReceiveReady" event
+          connection.on("ReceiveReady", async function (data) {
+            console.log("OnReceiveReady");
+            const type = data.type;
+            switch (type) {
+              case "ready":
+                var userConfirmed = window.confirm(data.email + " is calling, do you want to answer?");
+                if (userConfirmed) {
+                  var matchingFriend = app.friends.find(friend => friend.email === data.email);
+                  app.selectFriend(matchingFriend);
+                  await app.start();
+                } else {
+
+                }
+
+                if (!app.localStream) {
+                  console.log('not ready yet');
+                  return;
+                }
+                app.handleReady(data);
+                break;
+              default:
+                console.log("unhandled", data);
+                break;
+            }
+          });
+
+          // Handle "OnReceiveBye" event
+          connection.on("ReceiveBye", async function (data) {
+            console.log("OnReceiveBye");
+            const type = data.type;
+            switch (type) {
+              case "bye":
+                await app.hangup();
+                break;
+              default:
+                console.log("unhandled", data);
+                break;
+            }
+          });
+
+          // Handle "OnReceiveIceCandidate" event
+          connection.on("ReceiveIceCandidate", async function (data) {
+            console.log("OnReceiveIceCandidate");
+            const type = data.type;
+            switch (type) {
+              case "candidate":
+                await app.handleCandidate(data);
+                break;
+              default:
+                console.log("unhandled", data);
+                break;
+            }
+          });
+
+          // Handle "OnReceiveSdpOffer" event
+          connection.on("ReceiveSdpOffer", async function (data) {
+            console.log("OnReceiveSdpOffer");
+            const type = data.type;
+            switch (type) {
+              case "offer":
+                await app.handleOffer(data);
+                break;
+              default:
+                console.log("unhandled", data);
+                break;
+            }
+          });
+
+          // Handle "OnReceiveSdpAnswer" event
+          connection.on("ReceiveSdpAnswer", async function (data) {
+            console.log("OnReceiveSdpAnswer");
+            const type = data.type;
+            switch (type) {
+              case "answer":
+                await app.handleAnswer(data);
+                break;
+              default:
+                console.log("unhandled", data);
+                break;
+            }
+          });
+
+          // Handle "OnUserLoggedIn" event
+          connection.on("UserLoggedIn", async function (user) {
+            app.activeUsers.push(user);
+            console.log('Connected', app.activeUsers);
+          });
+
+          // Handle "OnUserLoggedOut" event
+          connection.on("UserLoggedOut", async function (user) {
+            app.activeUsers.splice(app.activeUsers.indexOf(user), 1);
+            console.log('Connected', app.activeUsers);
+          });
+
+          // Handle "OnConnectedUsers" event
+          connection.on("ConnectedUsers", async function (users) {
+            app.activeUsers = users.slice();
+            console.log('Connected', app.activeUsers);
+          });
+
+          // Handle "OnReceiveMessage" event
+          connection.on("ReceiveMessage", async function (user, message) {
+            Messages.push(`${user}: ${message}`); // Assuming Messages is an array
+          });
+
+        },
+        login() {
+          connection.invoke("Login", this.Email).catch(function (err) {
+            console.error(err.toString());
+          });
+        },
+        logout() {
+          connection.invoke("Logout", this.Email).catch(function (err) {
+            console.error(err.toString());
+          });
+        },
+        async fetchFriends() {
+            try {
+                const response = await authFetch({
+                    url: 'https://localhost:9000/api/friends',
+                    method: 'GET',
+                });
+
+                if (response) {
+                    this.friends = response;
+
+                    app.connectedUsers();
+                } else {
+                    this.friends = [];
+                }
+            } catch (error) {
+                console.error(error);
+                this.friends = [];
+            }
+        },
+        async connectedUsers() {
+          connection.invoke("GetConnectedUsers").catch(function (err) {
+            console.error(err.toString());
+          });
+        },
+        async selectFriend(friend) {
+          if (app.pc) {
+            console.log('already in call, ignoring');
+            return;
+          }
+          if (app.selectedFriend && app.selectedFriend.email !== friend.email) {
+            await app.hangup();
+          }
+          app.selectedFriend = friend;
+        },
+        async start() {
+          this.status = 'called';
+          console.log('Starting call: Starting localStream in localVideo');
+
+          try {
+            app.localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+            this.localVideoElement.srcObject = app.localStream;
+          } catch (e) {
+            alert(`getUserMedia() error: ${e.name}`);
+          }
+        },
+        async hangup() {
+          this.status = 'idle';
+          console.log('Ending call');
+
+          if (app.pc) {
+            app.pc.close();
+            app.pc = null;
+          }
+          if (app.localStream) {
+            app.localStream.getTracks().forEach(track => track.stop());
+            app.localStream = null;
+          }
+        },
+        async startButtonClicked() {
+          await app.start();
+          connection.invoke("sendReady", { type: "ready", email: localStorage.getItem('email') }).catch(function (err) {
+            console.error(err.toString());
+          });
+        },
+        async hangupButtonClicked() {
+          await app.hangup();
+          connection.invoke("sendBye", { type: "bye" }).catch(function (err) {
+            console.error(err.toString());
+          });
+        },
+
+        async handleReady(data) {
+          await app.createPeerConnection();
+          const offer = await app.pc.createOffer();
+
+          try {
+            await app.pc.setLocalDescription(offer);
+            console.log(`pc setLocalDescription complete`);
+          } catch (e) {
+            console.log(`Failed to set session description: ${e.toString()}`);
+          }
+
+          connection.invoke("SendSdpOffer", { type: "offer", sdp: offer.sdp }).catch(function (err) {
+            console.error(err.toString());
+          });
+        },
+        async createPeerConnection() {
+          app.pc = new RTCPeerConnection();
+          app.pc.onicecandidate = e => {
+            const message = {
+              type: 'candidate',
+              candidate: null,
+            };
+            if (e.candidate) {
+              message.candidate = e.candidate.candidate;
+              message.sdpMid = e.candidate.sdpMid;
+              message.sdpMLineIndex = e.candidate.sdpMLineIndex;
+            }
+            connection.invoke("SendIceCandidate", message).catch(function (err) {
+              console.error(err.toString());
+            });
+          };
+          app.pc.ontrack = e => { this.remoteVideoElement.srcObject = e.streams[0]; console.log('remotePC received remote stream'); };
+          app.localStream.getTracks().forEach(track => app.pc.addTrack(track, app.localStream));
+        },
+        async handleOffer(offer) {
+          if (app.pc) {
+            console.error('existing peerconnection');
+            return;
+          }
+          await this.createPeerConnection();
+          await app.pc.setRemoteDescription(offer);
+
+          const answer = await app.pc.createAnswer();
+          await app.pc.setLocalDescription(answer);
+          connection.invoke("SendSdpAnswer", { type: "answer", sdp: answer.sdp }).catch(function (err) {
+            console.error(err.toString());
+          });
+        },
+        async handleAnswer(answer) {
+          if (!app.pc) {
+            console.error('no peerconnection');
+            return;
+          }
+          await app.pc.setRemoteDescription(answer);
+        },
+        async handleCandidate(candidate) {
+          if (!app.pc) {
+            console.error('no peerconnection');
+            return;
+          }
+          if (!candidate.candidate) {
+            await app.pc.addIceCandidate(null);
+          } else {
+            await app.pc.addIceCandidate(candidate);
+            console.log(`addIceCandidate success`);
+          }
+        },
+      }
+    });
+  </script>
+}

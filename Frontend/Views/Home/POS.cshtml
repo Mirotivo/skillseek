@@ -1,0 +1,254 @@
+﻿@{
+  ViewData["Title"] = "POS";
+}
+
+<div class="bg-light">
+  <h1 class="display-4">POS</h1>
+
+  <div class="container" id="posManager">
+    <div class="row mb-5 align-items-center">
+
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <form v-on:submit.prevent="searchProducts" class="d-flex search-form">
+          <input v-model="searchQuery" type="search" name="query" class="form-control mr-2"
+            placeholder="Search products">
+          <button type="submit" v-on:click="searchProducts" class="btn btn-primary px-4">Search</button>
+        </form>
+      </div>
+
+    </div>
+
+    <div class="row">
+
+      <div class="col-sm-8">
+        <div class="row">
+          <div class="d-flex flex-row mb-4" v-for="product in products">
+
+            <div class="card">
+              <h3><a>{{ product.title }}</a></h3>
+              <p>{{ product.description }}</p>
+              <p class="meta">
+                {{ product.category.name }}
+                <span class="mr-2 mb-2">{{ product.price }} $</span>
+              </p>
+
+              <p><a class="btn btn-success" v-on:click="addProductToOrder(product)">Add</a></p>
+            </div>
+
+          </div>
+        </div>
+
+
+        <div class="">
+          <template v-for="pageIndex in totalPages">
+            <span v-if="pageIndex === currentPage" :key="pageIndex">
+              {{ pageIndex }}
+            </span>
+            <a v-else href="#" :key="pageIndex" v-on:click="changePage(pageIndex)">
+              {{ pageIndex }}
+            </a>
+          </template>
+        </div>
+      </div>
+
+      <div class="col-sm-4">
+        <input v-model="customerName" type="text" id="customerName" placeholder="Enter customer name">
+        <select v-model="stationGroupSelector" id="stationGroupSelector">
+          <option v-for="group in stationgroups" :value="group.id">{{ group.name }}</option>
+        </select>
+        <button v-on:click="submitOrder" id="sendButton">Send</button>
+
+        <div class="total-price">
+          <p>Total Price: {{ totalPrice }} $</p>
+        </div>
+        <button v-on:click="clearItems" class="btn btn-danger mt-3">Clear Items</button>
+        <div id="orderItemsDiv">
+          <div v-for="(item, index) in orderItems" class="order-item">
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.description }}</p>
+            <p class="meta">
+              <span class="mr-2 mb-2">{{ item.price }} $</span>
+              <button v-on:click="decreaseQuantity(index)" class="btn btn-secondary btn-sm">-</button>
+              {{ item.quantity }}
+              <button v-on:click="increaseQuantity(index)" class="btn btn-primary btn-sm">+</button>
+              <button v-on:click="deleteItem(index)" class="btn btn-danger btn-sm">Delete</button>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Add a Bootstrap modal to your HTML -->
+<div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="qrCodeModalLabel">QR Code</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="qrCodeContainer">
+          <!-- QR code will be displayed here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+    <script>
+      connection.start().then(function () {
+          // Connection to the hub is established
+      });
+
+      const posManager = new Vue({
+        el: '#posManager',
+        data: {
+          // Products Search
+          searchQuery: '',
+          products: [],
+          currentPage: 1,
+          itemsPerPage: 4,
+          totalPages: 1,
+
+          // POS
+          orderItems: [],
+          customerName: "",
+          stationGroupSelector: "",
+
+          stationgroups: []
+        },
+        computed: {
+          totalPrice() {
+            return this.orderItems.reduce((total, item) => {
+              return total + item.price * item.quantity;
+            }, 0);
+          },
+        },
+        created() {
+          this.fetchStationGroups();
+          this.searchProducts();
+        },
+        methods: {
+          fetchStationGroups() {
+            fetch('https://localhost:9000/api/stationgroups')
+              .then(response => response.json())
+              .then(data => {
+                this.stationgroups = data;
+                if (this.stationgroups.length > 0) {
+                  this.stationGroupSelector = this.stationgroups[0].id;
+                }
+              })
+              .catch(error => {
+                console.error('Error fetching station groups:', error);
+              });
+          },
+          searchProducts() {
+            fetch(`https://localhost:9000/api/products?query=${this.searchQuery}&page=${this.currentPage}`)
+              .then((response) => response.json())
+              .then((data) => {
+                this.products = data.currentPageData;
+                this.currentPage = data.currentPage;
+                this.totalPages = data.totalPages;
+              })
+              .catch((error) => {
+                console.error('Error fetching products:', error);
+              });
+          },
+          changePage(pageIndex) {
+            this.currentPage = pageIndex;
+            this.searchProducts(pageIndex);
+          },
+
+          addProductToOrder(product) {
+            const existingItem = this.orderItems.find(item => item.title === product.title);
+            if (existingItem) {
+              existingItem.quantity++;
+            } else {
+              const orderItem = {
+                categoryId: product.category.id,
+                title: product.title,
+                description: product.description,
+                price: product.price,
+                quantity: 1
+              };
+              this.orderItems.push(orderItem);
+            }
+          },
+          decreaseQuantity(index) {
+            if (this.orderItems[index].quantity > 0) {
+              this.orderItems[index].quantity--;
+
+              if (this.orderItems[index].quantity === 0) {
+                this.deleteItem(index);
+              }
+            }
+          },
+          increaseQuantity(index) {
+            this.orderItems[index].quantity++;
+          },
+          deleteItem(index) {
+            this.orderItems.splice(index, 1);
+          },
+          clearItems() {
+            this.orderItems = [];
+          },
+
+
+
+
+          submitOrder() {
+            const selectedStationGroup = this.stationgroups.find(group => group.id === this.stationGroupSelector);
+            const order = {
+              Source: "POS",
+              CustomerName: this.customerName,
+              StationGroup: selectedStationGroup,
+              StationGroupID: this.stationGroupSelector,
+              Timestamp: new Date(),
+              Status: "InProgress",
+              OrderItems: this.orderItems,
+              Notes: null
+            };
+
+            fetch('https://localhost:9000/api/purchaseorders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(order),
+            })
+            .then(response => response.json())
+            .then(createdPurchaseOrder => {
+                // Send a notification to stations
+                const selectedStationGroup = this.stationgroups.find(group => group.id === this.stationGroupSelector);
+                createdPurchaseOrder.StationGroup = selectedStationGroup;
+                console.log(createdPurchaseOrder);
+                connection.invoke("NotifyStations", createdPurchaseOrder).catch(function (err) {
+                    console.error(err.toString());
+                });
+
+                // Display the QR code in the modal
+                const qrCodeModal = document.getElementById('qrCodeModal');
+                const qrCodeContainer = document.getElementById('qrCodeContainer');
+                // Set the QR code image source to the base64-encoded QR code received in the response
+                qrCodeContainer.innerHTML = `<img src="data:image/png;base64,${createdPurchaseOrder.qrCode}" alt="QR Code" />`;
+                // Open the modal
+                const bootstrapModal = new bootstrap.Modal(qrCodeModal);
+                bootstrapModal.show();
+
+                // Clear order items and customer name
+                this.orderItems = [];
+                this.customerName = "";
+            })
+            .catch(error => {
+                console.error('Error creating purchase order:', error);
+            });
+          },
+        },
+      });
+    </script>
+    <script src="~/app/pos.js"></script>
+}

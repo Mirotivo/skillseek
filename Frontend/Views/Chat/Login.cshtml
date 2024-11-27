@@ -1,0 +1,102 @@
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div id="app" class="text-center">
+    <h3>Login</h3>
+
+    <form v-on:submit.prevent="login">
+        <div class="form-group">
+            <label for="Input_Email">Email address</label>
+            <input type="text" id="Input_Email" class="form-control" placeholder="example@gmail.com"
+                v-model="loginModel.Email" v-on:input="invalidLogin = false"
+                v-bind:class="{ 'is-invalid': emailInvalid }" />
+            <span class="text-danger" v-if="emailInvalid">
+                Invalid email format. Please enter a valid email address.
+            </span>
+        </div>
+
+        <div class="form-group">
+            <label for="Input_Password">Password</label>
+            <input type="password" id="Input_Password" class="form-control" placeholder="password"
+                v-model="loginModel.Password" v-on:input="invalidLogin = false" />
+        </div>
+
+        <div v-if="invalidLogin" class="alert alert-danger" role="alert">
+            Invalid email or password. Please check your credentials and try again.
+        </div>
+
+        <button type="submit" class="btn btn-primary" :disabled="!isFormValid">Login</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const app = new Vue({
+            el: '#app',
+            data: {
+                invalidLogin: false,
+                loginModel: {
+                    Email: '',
+                    Password: ''
+                },
+                emailInvalid: false,
+            },
+            computed: {
+                isFormValid() {
+                    const isEmailValid = this.isValidEmail(this.loginModel.Email);
+                    return (
+                        this.loginModel.Email.trim() !== '' &&
+                        this.loginModel.Password.trim() !== '' &&
+                        isEmailValid
+                    );
+                },
+            },
+
+            methods: {
+                async login() {
+                    try {
+                        const response = await fetch('https://localhost:9000/api/users/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                email: this.loginModel.Email,
+                                password: this.loginModel.Password,
+                            }),
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            const token = data.token;
+
+                            // Save the token in localStorage
+                            localStorage.setItem('token', token);
+                            localStorage.setItem('email', this.loginModel.Email);
+
+                            // Check if there is a returnUrl parameter in the current URL
+                            const params = new URLSearchParams(window.location.search);
+                            const returnUrl = params.get('returnUrl');
+
+                            // Redirect to returnUrl if it exists; otherwise, go to '/chat/messenger'
+                            if (returnUrl) {
+                                window.location.href = returnUrl;
+                            } else {
+                                window.location.href = '/chat/messenger';
+                            }
+                        } else {
+                            this.invalidLogin = true;
+                        }
+                    } catch (error) {
+                        console.error(error);
+                    }
+                },
+                isValidEmail(email) {
+                    const emailPattern = /^[A-Za-z0-9._%-]+@@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
+                    return emailPattern.test(email);
+                },
+            }
+        });
+    </script>
+}

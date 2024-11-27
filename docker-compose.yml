@@ -1,0 +1,21 @@
+services:
+  backend-container:
+    build:
+      context: ./Backend
+    ports:
+      - "9000:443"
+    volumes:
+      - ${PWD}/Database:/skillseek-backend/Database
+    container_name: backend-container
+    image: mirotivo/skillseek-backend-container:latest
+
+  frontend-container:
+    depends_on:
+      - backend-container
+    build:
+      context: ./Frontend
+    ports:
+      - "8080:80"
+      - "8000:443"
+    container_name: frontend-container
+    image: mirotivo/skillseek-frontend-container:latest
