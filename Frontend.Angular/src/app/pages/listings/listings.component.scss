@@ -1,0 +1,108 @@
+.listings-page {
+    display: flex;
+  
+    .sidebar {
+      width: 25%;
+      background: #f9f9f9;
+      padding: 20px;
+      border-right: 1px solid #ddd;
+  
+      .create-listing-btn {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        cursor: pointer;
+      }
+  
+      .listings {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+  
+        li {
+          padding: 10px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          border-bottom: 1px solid #ddd;
+          transition: background 0.3s;
+  
+          &.active {
+            background: #e6f7ff;
+          }
+  
+          .listing-info {
+            display: flex;
+            align-items: center;
+  
+            img {
+              width: 50px;
+              height: 50px;
+              border-radius: 50%;
+              margin-right: 10px;
+            }
+  
+            .listing-details {
+              h3 {
+                margin: 0;
+                font-size: 1rem;
+              }
+  
+              .status {
+                font-size: 0.8rem;
+                color: #666;
+              }
+            }
+          }
+        }
+      }
+    }
+  
+    .main-content {
+      flex: 1;
+      padding: 20px;
+  
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+  
+        h2 {
+          margin: 0;
+        }
+  
+        .premium-btn {
+          padding: 10px 20px;
+          background: #ff5c5c;
+          color: #fff;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+      }
+  
+      .listing-section {
+        margin-bottom: 20px;
+  
+        h4 {
+          margin-bottom: 10px;
+        }
+  
+        .location-options span {
+          display: inline-block;
+          padding: 5px 10px;
+          margin-right: 5px;
+          background: #007bff;
+          color: #fff;
+          border-radius: 5px;
+        }
+      }
+    }
+  }
+  

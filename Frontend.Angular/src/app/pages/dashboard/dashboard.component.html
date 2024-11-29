@@ -1,0 +1,84 @@
+<app-header></app-header>
+<app-navigation-bar></app-navigation-bar>
+
+<div class="dashboard-container">
+  <!-- Header Section -->
+  <div class="header">
+    <h1>Dashboard</h1>
+  </div>
+
+  <!-- Profile Card -->
+  <div class="profile-section">
+    <div class="profile-card">
+      <img class="profile-image" [src]="user.profileImage" alt="Profile Photo" />
+      <h2>{{ user.name }}</h2>
+      <p>{{ user.address }}</p>
+      <div class="profile-status">
+        <p><strong>Profile Verified:</strong> {{ user.profileVerified.join(', ') }}</p>
+        <p><strong>Lessons Completed:</strong> {{ user.lessonsCompleted }}</p>
+        <p><strong>Evaluations:</strong> {{ user.evaluations }}</p>
+      </div>
+      <a class="btn btn-primary" href="/premium">Discover Premium</a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Messages Section -->
+    <div class="messages-section">
+      <h3>My Messages</h3>
+      <ul>
+        <li *ngFor="let message of messages">
+          <p><strong>{{ message.sender }}</strong> - {{ message.content }}</p>
+          <span>{{ message.time }}</span>
+        </li>
+      </ul>
+      <a href="/messages" class="view-all">See all messages</a>
+    </div>
+
+    <!-- Reviews Pending Section -->
+    <div class="reviews-section">
+      <h3>Reviews Pending</h3>
+      <ul>
+        <li *ngFor="let review of reviewsPending">
+          <p><strong>{{ review.name }}</strong> - {{ review.message }}</p>
+          <button class="btn btn-warning">Leave a Review</button>
+        </li>
+      </ul>
+      <a href="/evaluations" class="view-all">See all pending reviews</a>
+    </div>
+
+    <!-- Payments Section -->
+    <div class="payments-section">
+      <h3>My Payments</h3>
+      <ul>
+        <li *ngFor="let payment of payments">
+          <p>{{ payment.date }} - {{ payment.description }}</p>
+          <span [ngClass]="{ 'text-success': payment.amount > 0, 'text-danger': payment.amount < 0 }">
+            {{ payment.amount | currency }}
+          </span>
+        </li>
+      </ul>
+      <a href="/profile" class="view-all">See all payments</a>
+    </div>
+
+    <!-- Listings Section -->
+    <div class="listings-section">
+      <h3>My Listings</h3>
+      <ul>
+        <li *ngFor="let listing of listings">
+          <div class="listing">
+            <img [src]="listing.image" alt="Listing Image" />
+            <div>
+              <h4>{{ listing.title }}</h4>
+              <p>{{ listing.category }}</p>
+              <p>{{ listing.rate }}</p>
+              <button class="btn btn-secondary">Edit</button>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <a href="/listings" class="view-all">See all listings</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+<app-header></app-header>
+<app-navigation-bar></app-navigation-bar>
+<div class="evaluations-page">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul>
+        <li class="active">My Reviews</li>
+        <li>My Recommendations</li>
+        <li>Sponsorship</li>
+      </ul>
+    </div>
+  
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Reviews Pending -->
+      <div class="reviews-pending">
+        <h3>Reviews Pending</h3>
+        <ul>
+          <li *ngFor="let review of pendingReviews">
+            <div class="review-details">
+              <div class="review-avatar">
+                <span>{{ review.name[0] }}</span>
+              </div>
+              <div>
+                <h4>{{ review.name }}</h4>
+                <p>{{ review.subject }}</p>
+                <p>{{ review.message }}</p>
+              </div>
+            </div>
+            <button class="btn leave-review-btn">Leave a Review</button>
+          </li>
+        </ul>
+        <a href="#" class="see-all">See all pending reviews ({{ remainingReviews }} remaining)</a>
+      </div>
+  
+      <!-- Reviews Section -->
+      <div class="reviews-section">
+        <div class="reviews-tabs">
+          <button [class.active]="activeTab === 'received'" (click)="setActiveTab('received')">
+            Reviews Received
+          </button>
+          <button [class.active]="activeTab === 'sent'" (click)="setActiveTab('sent')">
+            Reviews Sent
+          </button>
+        </div>
+  
+        <!-- Reviews Content -->
+        <div *ngIf="activeTab === 'received'" class="reviews-content">
+          <h3>Reviews Received</h3>
+          <ul>
+            <li *ngFor="let review of receivedReviews">
+              <div class="review-details">
+                <div class="review-avatar">
+                  <img *ngIf="review.avatar" [src]="review.avatar" alt="{{ review.name }}" />
+                  <span *ngIf="!review.avatar">{{ review.name[0] }}</span>
+                </div>
+                <div>
+                  <h4>{{ review.name }}</h4>
+                  <p>{{ review.subject }} student</p>
+                  <p>{{ review.feedback }}</p>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+  
+        <div *ngIf="activeTab === 'sent'" class="reviews-content">
+          <h3>Reviews Sent</h3>
+          <ul>
+            <li *ngFor="let review of sentReviews" class="review-item">
+              <div class="review-details">
+                <div class="review-avatar">
+                  <img *ngIf="review.avatar" [src]="review.avatar" alt="{{ review.name }}" />
+                  <span *ngIf="!review.avatar">{{ review.name[0] }}</span>
+                </div>
+                <div class="review-info">
+                  <h4>{{ review.name }}</h4>
+                  <p>{{ review.subject }} student</p>
+                  <p>{{ review.feedback }}</p>
+                </div>
+              </div>
+            </li>
+          </ul>
+          </div>
+      </div>
+    </div>
+  </div>
+  

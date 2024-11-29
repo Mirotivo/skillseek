@@ -1,0 +1,99 @@
+.payment-page {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    padding: 2rem;
+  
+    .back-button {
+      grid-column: span 2;
+      font-size: 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+  
+    .tutor-section {
+      text-align: center;
+  
+      .tutor-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+      }
+  
+      .tutor-info {
+        margin-top: 1rem;
+  
+        h2 {
+          margin: 0;
+        }
+  
+        .contacted-info {
+          color: red;
+          font-size: 0.9rem;
+        }
+      }
+    }
+  
+    .subscription-section {
+      .subtitle {
+        font-size: 1rem;
+        color: gray;
+      }
+  
+      .price {
+        font-size: 2rem;
+        color: red;
+        font-weight: bold;
+      }
+  
+      .benefits {
+        margin-top: 1rem;
+        list-style: none;
+        padding: 0;
+  
+        li {
+          display: flex;
+          align-items: center;
+  
+          span {
+            margin-right: 0.5rem;
+          }
+        }
+      }
+    }
+  
+    .payment-section {
+      margin-top: 2rem;
+  
+      .payment-options {
+        display: flex;
+        gap: 1rem;
+  
+        button {
+          flex: 1;
+          padding: 0.5rem;
+          border: 1px solid #ccc;
+          background: none;
+          cursor: pointer;
+  
+          &.selected {
+            border: 2px solid blue;
+          }
+        }
+      }
+  
+      .paypal-section {
+        margin-top: 1rem;
+  
+        .paypal-button {
+          background: blue;
+          color: white;
+          padding: 0.5rem 1rem;
+          border: none;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+  

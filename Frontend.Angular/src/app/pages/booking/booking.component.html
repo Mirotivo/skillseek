@@ -1,0 +1,64 @@
+<div class="booking-page" *ngIf="!loading; else loadingTemplate">
+  <!-- Back Button -->
+  <button class="back-button" (click)="goBack()">←</button>
+
+  <!-- Tutor Details Section -->
+  <div class="tutor-section">
+    <img [src]="tutor?.image" alt="{{ tutor?.name }}" class="tutor-image" />
+    <div class="tutor-info">
+      <h2>{{ tutor?.name }}</h2>
+      <p><strong>Category:</strong> {{ tutor?.category }}</p>
+      <p><strong>Title:</strong> {{ tutor?.title }}</p>
+      <p><strong>Rate:</strong> {{ tutor?.rate }}</p>
+    </div>
+  </div>
+
+  <!-- About Lesson and You Section -->
+  <div class="details-section">
+    <h3>About the Lesson</h3>
+    <p>{{ tutor?.aboutLesson }}</p>
+
+    <h3>About the Tutor</h3>
+    <p>{{ tutor?.aboutYou }}</p>
+  </div>
+
+  <!-- Message Section -->
+  <div class="message-section" *ngIf="showMessageSection">
+    <h3>Send a Message to {{ tutor?.name }}</h3>
+    <textarea
+      rows="4"
+      placeholder="Write your message here..."
+      [(ngModel)]="newMessage"
+    ></textarea>
+    <button class="btn btn-primary" (click)="sendMessage()">Send Message</button>
+    <p *ngIf="messageSuccess" class="success-message">
+      Your message has been sent!
+    </p>
+  </div>
+
+  <!-- Propose a Lesson Section -->
+  <div class="propose-lesson-section" *ngIf="!showMessageSection">
+    <h3>Propose a Lesson</h3>
+    <div class="form-group">
+      <label for="lessonDate">Date:</label>
+      <input id="lessonDate" type="date" [(ngModel)]="lessonDate" />
+    </div>
+    <div class="form-group">
+      <label for="lessonDuration">Duration (hours):</label>
+      <input id="lessonDuration" type="number" [(ngModel)]="lessonDuration" />
+    </div>
+    <div class="form-group">
+      <label for="lessonPrice">Price ($):</label>
+      <input id="lessonPrice" type="number" [(ngModel)]="lessonPrice" />
+    </div>
+    <button class="btn btn-primary" (click)="proposeLesson()">Propose Lesson</button>
+    <p *ngIf="proposeSuccess" class="success-message">
+      Lesson proposed successfully!
+    </p>
+  </div>
+</div>
+
+<!-- Loading Template -->
+<ng-template #loadingTemplate>
+  <div class="loading">Loading tutor details...</div>
+</ng-template>

@@ -2,6 +2,12 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "delete database",
+            "type": "shell",
+            "command": "node delete-database.js",
+            "problemMatcher": []
+        },
+        {
             "label": "build backend",
             "command": "dotnet",
             "type": "process",
@@ -11,7 +17,8 @@
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
-            "problemMatcher": "$msCompile"
+            "problemMatcher": "$msCompile",
+            "dependsOn": "delete file"
         },
         {
             "label": "build frontend",

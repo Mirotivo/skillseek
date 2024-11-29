@@ -41,6 +41,7 @@ builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
 builder.Services.AddTransient<IPurchaseOrderService, PurchaseOrderService>();
+builder.Services.AddTransient<ILessonCategoryService, LessonCategoryService>();
 builder.Services
         .AddAuthentication(options =>
         {
@@ -136,9 +137,13 @@ app.UseRouting(); // Add this line to configure routing
 app.UseCors(options =>
 {
     options.WithOrigins(
+        "http://localhost:4200",
         "https://localhost:8000",
         "https://localhost:9000/",
-        "https://92.205.162.126:8000"
+        "https://92.205.162.126:8000",
+        "http://110.144.148.168",
+        "http://110.144.148.168:80",
+        "http://110.144.148.168:8000"
     );
     // options.AllowAnyOrigin();
     options.AllowAnyMethod();

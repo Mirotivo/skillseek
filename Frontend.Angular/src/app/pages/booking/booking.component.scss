@@ -1,0 +1,79 @@
+.booking-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  
+    .tutor-section {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+  
+      .tutor-image {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+  
+      .tutor-info {
+        h2 {
+          margin: 0;
+          font-size: 24px;
+        }
+        p {
+          margin: 5px 0;
+        }
+      }
+    }
+  
+    .details-section {
+      margin-bottom: 20px;
+  
+      h3 {
+        margin-bottom: 10px;
+      }
+  
+      p {
+        margin: 0 0 10px;
+      }
+    }
+  
+    .message-section {
+      h3 {
+        margin-bottom: 10px;
+      }
+  
+      textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+  
+      .btn-primary {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+  
+        &:hover {
+          background-color: #0056b3;
+        }
+      }
+  
+      .success-message {
+        color: green;
+        margin-top: 10px;
+      }
+    }
+  
+    .loading {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 50px;
+    }
+  }
+  

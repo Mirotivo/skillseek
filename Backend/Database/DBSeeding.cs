@@ -183,32 +183,151 @@ public class UserSeeder
     {
         if (!context.Users.Any())
         {
-            var amr = new User
+            var users = new List<User>
             {
-                Email = "Amr.Mostafa@live.com",
-                // Password = "123456",
-                PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
-            };
-            var body = new User
-            {
-                Email = "Abdelrahman.Tarek@live.com",
-                // Password = "123456",
-                PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
-            };
-            var amir = new User
-            {
-                Email = "Amir.Salah@live.com",
-                // Password = "123456",
-                PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
-            };
-            var mostafa = new User
-            {
-                Email = "Mostafa.Salah@live.com",
-                // Password = "123456",
-                PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                new User
+                {
+                    FirstName = "Amr",
+                    LastName = "Mostafa",
+                    Email = "Amr.Mostafa@live.com",
+                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    // Password = "123456",
+                    PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                },
+                new User
+                {
+                    FirstName = "Abdelrahman",
+                    LastName = "Tarek",
+                    Email = "Abdelrahman.Tarek@live.com",
+                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    // Password = "123456",
+                    PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                },
+                new User
+                {
+                    FirstName = "Amir",
+                    LastName = "Salah",
+                    Email = "Amir.Salah@live.com",
+                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    // Password = "123456",
+                    PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                },
+                new User
+                {
+                    FirstName = "Mostafa",
+                    LastName = "Salah",
+                    Email = "Mostafa.Salah@live.com",
+                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    // Password = "123456",
+                    PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                },
+                new User
+                {
+                    FirstName = "Martineo",
+                    LastName = "",
+                    Email = "Martineo",
+                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    // Password = "123456",
+                    PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                },
+                new User
+                {
+                    FirstName = "Yurika",
+                    LastName = "",
+                    Email = "Yurika",
+                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    // Password = "123456",
+                    PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                },
+                new User
+                {
+                    FirstName = "Timothy",
+                    LastName = "",
+                    Email = "Timothy",
+                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    // Password = "123456",
+                    PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                },
+                new User
+                {
+                    FirstName = "Imke",
+                    LastName = "",
+                    Email = "Imke",
+                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    // Password = "123456",
+                    PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                },
+                new User
+                {
+                    FirstName = "Aziz",
+                    LastName = "",
+                    Email = "Aziz",
+                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    // Password = "123456",
+                    PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                },
+                new User
+                {
+                    FirstName = "Alice",
+                    LastName = "",
+                    Email = "Alice",
+                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    // Password = "123456",
+                    PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                },
+                new User
+                {
+                    FirstName = "Eloise",
+                    LastName = "",
+                    Email = "Eloise",
+                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    // Password = "123456",
+                    PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                },
+                new User
+                {
+                    FirstName = "Seun",
+                    LastName = "",
+                    Email = "Seun",
+                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    // Password = "123456",
+                    PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                },
+                new User
+                {
+                    FirstName = "Anthea",
+                    LastName = "",
+                    Email = "Anthea",
+                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    // Password = "123456",
+                    PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                },
+                new User
+                {
+                    FirstName = "Tanishka",
+                    LastName = "",
+                    Email = "Tanishka",
+                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    // Password = "123456",
+                    PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                },
             };
 
-            context.Users.AddRange(amr, body, amir, mostafa);
+            context.Users.AddRange(users);
             context.SaveChanges();
         }
     }
@@ -244,7 +363,6 @@ public class FriendshipSeeder
                     FriendId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
                 },
 
-                
                 new Friendship
                 {
                     UserId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
@@ -258,6 +376,294 @@ public class FriendshipSeeder
             };
 
             context.Friendships.AddRange(friendships);
+            context.SaveChanges();
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class LessonCategorySeeder
+{
+    public static void Seed(skillseekDbContext context)
+    {
+        if (!context.LessonCategories.Any())
+        {
+            var categories = new List<LessonCategory>
+            {
+                new LessonCategory { Name = "Maths" },
+                new LessonCategory { Name = "English" },
+                new LessonCategory { Name = "Piano" },
+                new LessonCategory { Name = "Singing" },
+                new LessonCategory { Name = "Japanese" },
+                new LessonCategory { Name = "Spanish" },
+                new LessonCategory { Name = "French" },
+                new LessonCategory { Name = "Swimming" },
+                new LessonCategory { Name = "Guitar" },
+                new LessonCategory { Name = "Electrical" },
+                new LessonCategory { Name = "Physics" },
+                new LessonCategory { Name = "Programming" },
+                new LessonCategory { Name = "Chemistry" },
+                new LessonCategory { Name = "Art" },
+                new LessonCategory { Name = "Music" },
+            };
+
+            context.LessonCategories.AddRange(categories);
+            context.SaveChanges();
+        }
+    }
+}
+
+public class ListingSeeder
+{
+    public static void Seed(skillseekDbContext context)
+    {
+        if (!context.Listings.Any())
+        {
+            var listings = new List<Listing>
+            {
+                new Listing
+                {
+                    UserId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => c.Name == "Electrical")?.Id ?? 0,
+                    HourRate = 40.0M,
+                    Title = "Academic tutoring",
+                    Description = "Specialize in computer architecture and FPGA",
+                    Image = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    Locations = LocationType.Webcam | LocationType.StudentLocation | LocationType.TutorLocation,
+                    AboutYou = "My name is Amr, and I’m a computer engineer...",
+                    AboutLesson = "Lessons are instructional sessions designed...",
+                },
+                new Listing
+                {
+                    UserId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => c.Name == "Maths")?.Id ?? 0,
+                    HourRate = 40.0M,
+                    Title = "Postgraduate Math tutoring",
+                    Description = "Ph.D. student providing advanced courses in Math",
+                    Image = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    Locations = LocationType.Webcam | LocationType.StudentLocation | LocationType.TutorLocation,
+                    AboutYou = "My name is Amr, and I’m a computer engineer...",
+                    AboutLesson = "Mathematics lessons tailored for students...",
+                },
+                new Listing
+                {
+                    UserId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => c.Name == "English")?.Id ?? 0,
+                    HourRate = 50.0M,
+                    Title = "English tutoring",
+                    Description = "Experienced academic tutor helping improve writing and speaking skills",
+                    Image = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    Locations = LocationType.Webcam,
+                    AboutYou = "My name is Amr, and I specialize in academic tutoring...",
+                    AboutLesson = "Focus on English speaking, writing, and grammar skills...",
+                },
+                new Listing
+                {
+                    UserId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => c.Name == "Guitar")?.Id ?? 0,
+                    HourRate = 60.0M,
+                    Title = "Guitar lessons",
+                    Description = "Mount Lawley-based studio offering personalized guitar lessons",
+                    Image = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    Locations = LocationType.Webcam | LocationType.TutorLocation,
+                    AboutYou = "I have over 10 years of experience teaching guitar to students of all levels...",
+                    AboutLesson = "Learn guitar basics, chords, and advanced techniques...",
+                },
+                // Add random listings with varying details
+                new Listing
+                {
+                    UserId = context.Users.FirstOrDefault(c => c.Email == "Abdelrahman.Tarek@live.com")?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => c.Name == "Physics")?.Id ?? 0,
+                    HourRate = 70.0M,
+                    Title = "Physics tutoring",
+                    Description = "Experienced tutor helping students excel in Physics concepts",
+                    Image = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    Locations = LocationType.Webcam | LocationType.StudentLocation,
+                    AboutYou = "Physics graduate with 5+ years of teaching experience...",
+                    AboutLesson = "Interactive sessions to simplify complex Physics concepts...",
+                },
+                new Listing
+                {
+                    UserId = context.Users.FirstOrDefault(c => c.Email == "Alice")?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => c.Name == "Programming")?.Id ?? 0,
+                    HourRate = 80.0M,
+                    Title = "Programming for beginners",
+                    Description = "Learn Python, Java, and web development from scratch",
+                    Image = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    Locations = LocationType.Webcam,
+                    AboutYou = "Professional software developer with 8 years of experience...",
+                    AboutLesson = "Practical programming lessons for beginners and intermediate learners...",
+                },
+                new Listing
+                {
+                    UserId = context.Users.FirstOrDefault(c => c.Email == "Tanishka")?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => c.Name == "Chemistry")?.Id ?? 0,
+                    HourRate = 55.0M,
+                    Title = "Chemistry made simple",
+                    Description = "Breaking down complex Chemistry topics for students",
+                    Image = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    Locations = LocationType.Webcam | LocationType.StudentLocation,
+                    AboutYou = "Chemistry teacher with a passion for making science fun...",
+                    AboutLesson = "Comprehensive Chemistry lessons with real-world applications...",
+                },
+                new Listing
+                {
+                    UserId = context.Users.FirstOrDefault(c => c.Email == "Anthea")?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => c.Name == "Art")?.Id ?? 0,
+                    HourRate = 45.0M,
+                    Title = "Beginner Art Classes",
+                    Description = "Learn the fundamentals of drawing and painting",
+                    Image = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    Locations = LocationType.Webcam | LocationType.TutorLocation,
+                    AboutYou = "Artist with 6 years of experience teaching beginners...",
+                    AboutLesson = "Step-by-step lessons to master the basics of drawing and painting...",
+                },
+                new Listing
+                {
+                    UserId = context.Users.FirstOrDefault(c => c.Email == "Seun")?.Id ?? 0,
+                    LessonCategoryId = context.LessonCategories.FirstOrDefault(c => c.Name == "Music")?.Id ?? 0,
+                    HourRate = 75.0M,
+                    Title = "Piano Lessons",
+                    Description = "Personalized piano lessons for all levels",
+                    Image = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
+                    Locations = LocationType.Webcam | LocationType.StudentLocation,
+                    AboutYou = "Professional pianist offering lessons to inspire creativity...",
+                    AboutLesson = "Learn piano techniques, reading sheet music, and more...",
+                }
+            };
+
+            context.Listings.AddRange(listings);
+            context.SaveChanges();
+        }
+    }
+}
+
+
+public class ReviewSeeder
+{
+    public static void Seed(skillseekDbContext context)
+    {
+        if (!context.Reviews.Any())
+        {
+            var reviews = new List<Review>
+            {
+                new Review
+                {
+                    ReviewerId = context.Users.FirstOrDefault(c => c.Email == "Abdelrahman.Tarek@live.com")?.Id ?? 0,
+                    RevieweeId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    Rating = 5,
+                    Title = "C++ student",
+                    Comments = "Great tutor! Very helpful and knowledgeable."
+                },
+                new Review
+                {
+                    ReviewerId = context.Users.FirstOrDefault(c => c.Email == "Martineo")?.Id ?? 0,
+                    RevieweeId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    Rating = 5,
+                    Title = "C++ student",
+                    Comments = "Amr is really patient and professional. Highly recommended!."
+                },
+                new Review
+                {
+                    ReviewerId = context.Users.FirstOrDefault(c => c.Email == "Yurika")?.Id ?? 0,
+                    RevieweeId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    Rating = 5,
+                    Title = "Python student",
+                    Comments = "He tried his best to help me out. A good guy."
+                },
+                new Review
+                {
+                    ReviewerId = context.Users.FirstOrDefault(c => c.Email == "Timothy")?.Id ?? 0,
+                    RevieweeId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    Rating = 5,
+                    Title = "C++ student",
+                    Comments = "Very friendly and knowledgeable."
+                },
+                new Review
+                {
+                    ReviewerId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    RevieweeId = context.Users.FirstOrDefault(c => c.Email == "Abdelrahman.Tarek@live.com")?.Id ?? 0,
+                    Rating = 4,
+                    Title = "C++ student",
+                    Comments = "The student was attentive but needed more preparation for the lesson."
+                },
+            };
+
+            context.Reviews.AddRange(reviews);
+            context.SaveChanges();
+        }
+    }
+}
+
+
+
+public class ChatSeeder
+{
+    public static void Seed(skillseekDbContext context)
+    {
+        if (!context.Chats.Any())
+        {
+            var chats = new List<Chat>
+            {
+                new Chat
+                {
+                    StudentId = context.Users.FirstOrDefault(c => c.Email == "Abdelrahman.Tarek@live.com")?.Id ?? 0,
+                    TutorId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                },
+            };
+
+            context.Chats.AddRange(chats);
+            context.SaveChanges();
+        }
+    }
+}
+
+
+
+public class MessageSeeder
+{
+    public static void Seed(skillseekDbContext context)
+    {
+        if (!context.Messages.Any())
+        {
+            var chats = new List<Message>
+            {
+                new Message
+                {
+                    ChatId = 1,
+                    SenderId = context.Users.FirstOrDefault(c => c.Email == "Abdelrahman.Tarek@live.com")?.Id ?? 0,
+                    RecipientId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    Content = "Hi, I have a question about the lesson."
+                },
+                new Message
+                {
+                    ChatId = 1,
+                    SenderId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    RecipientId = context.Users.FirstOrDefault(c => c.Email == "Abdelrahman.Tarek@live.com")?.Id ?? 0,
+                    Content = "Sure!."
+                },
+                new Message
+                {
+                    ChatId = 1,
+                    SenderId = context.Users.FirstOrDefault(c => c.Email == "Abdelrahman.Tarek@live.com")?.Id ?? 0,
+                    RecipientId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    Content = "How did create this system?"
+                },
+            };
+
+            context.Messages.AddRange(chats);
             context.SaveChanges();
         }
     }

@@ -15,6 +15,12 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /skillseek-backend
 COPY --from=build /skillseek-backend/out .
 
+# Copy the SSL folder from the host to the container
+# COPY ./ssl /skillseek-backend/ssl
+# Create a volume for the SQLite database file
+# VOLUME /Database
+
+
 # Install OpenSSL to generate SSL certificates
 RUN apt-get update && apt-get install -y openssl
 
