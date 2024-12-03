@@ -5,6 +5,7 @@
     name: string;
     contactedCount: number;
     reviews: number;
+    lessonCategoryId: number;
     category: string;
     title: string;
     image: string;

@@ -194,136 +194,150 @@ public class UserSeeder
                     ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
                     // Password = "123456",
                     PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                    Roles = Role.Student | Role.Tutor,
                 },
                 new User
                 {
                     FirstName = "Abdelrahman",
                     LastName = "Tarek",
                     Email = "Abdelrahman.Tarek@live.com",
-                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    Address = "15 George St, Sydney NSW 2000, Australia",
                     ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
                     // Password = "123456",
                     PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                    Roles = Role.Student | Role.Tutor,
                 },
                 new User
                 {
                     FirstName = "Amir",
                     LastName = "Salah",
                     Email = "Amir.Salah@live.com",
-                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    Address = "9 Smith St, Chatswood NSW 2067, Australia",
                     ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
                     // Password = "123456",
                     PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                    Roles = Role.Student | Role.Tutor,
                 },
                 new User
                 {
                     FirstName = "Mostafa",
                     LastName = "Salah",
                     Email = "Mostafa.Salah@live.com",
-                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    Address = "3 Greenway Dr, Castle Hill NSW 2154, Australia",
                     ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
                     // Password = "123456",
                     PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                    Roles = Role.Student | Role.Tutor,
                 },
                 new User
                 {
                     FirstName = "Martineo",
                     LastName = "",
                     Email = "Martineo",
-                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    Address = "47 Miller St, North Sydney NSW 2060, Australia",
                     ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
                     // Password = "123456",
                     PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                    Roles = Role.Student | Role.Tutor,
                 },
                 new User
                 {
                     FirstName = "Yurika",
                     LastName = "",
                     Email = "Yurika",
-                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    Address = "21 Pacific Hwy, Hornsby NSW 2077, Australia",
                     ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
                     // Password = "123456",
                     PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                    Roles = Role.Student | Role.Tutor,
                 },
                 new User
                 {
                     FirstName = "Timothy",
                     LastName = "",
                     Email = "Timothy",
-                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    Address = "8 Hunter St, Parramatta NSW 2150, Australia",
                     ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
                     // Password = "123456",
                     PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                    Roles = Role.Student | Role.Tutor,
                 },
                 new User
                 {
                     FirstName = "Imke",
                     LastName = "",
                     Email = "Imke",
-                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    Address = "12 Macquarie St, Liverpool NSW 2170, Australia",
                     ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
                     // Password = "123456",
                     PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                    Roles = Role.Student | Role.Tutor,
                 },
                 new User
                 {
                     FirstName = "Aziz",
                     LastName = "",
                     Email = "Aziz",
-                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    Address = "10 Park Ave, Blacktown NSW 2148, Australia",
                     ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
                     // Password = "123456",
                     PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                    Roles = Role.Student | Role.Tutor,
                 },
                 new User
                 {
                     FirstName = "Alice",
                     LastName = "",
                     Email = "Alice",
-                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    Address = "5 Victoria Rd, Ryde NSW 2112, Australia",
                     ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
                     // Password = "123456",
                     PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                    Roles = Role.Student | Role.Tutor,
                 },
                 new User
                 {
                     FirstName = "Eloise",
                     LastName = "",
                     Email = "Eloise",
-                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    Address = "7 Phillip St, Penrith NSW 2750, Australia",
                     ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
                     // Password = "123456",
                     PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                    Roles = Role.Student | Role.Tutor,
                 },
                 new User
                 {
                     FirstName = "Seun",
                     LastName = "",
                     Email = "Seun",
-                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    Address = "23 Bridge St, Erskineville NSW 2043, Australia",
                     ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
                     // Password = "123456",
                     PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                    Roles = Role.Student | Role.Tutor,
                 },
                 new User
                 {
                     FirstName = "Anthea",
                     LastName = "",
                     Email = "Anthea",
-                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    Address = "17 Railway Parade, Burwood NSW 2134, Australia",
                     ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
                     // Password = "123456",
                     PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                    Roles = Role.Student | Role.Tutor,
                 },
                 new User
                 {
                     FirstName = "Tanishka",
                     LastName = "",
                     Email = "Tanishka",
-                    Address = "76 Bancroft Ave, Roseville NSW 2069, Australia",
+                    Address = "42 Oxford St, Bondi Junction NSW 2022, Australia",
                     ProfileImage = $"https://robohash.org/{Guid.NewGuid()}?size=200x200&set=set1",
                     // Password = "123456",
                     PasswordHash = "AQAAAAIAAYagAAAAELHjO0Ma6EpZO1UcrJ0FEJu4iXQk3jBFFn8c1p0m0r0UatkNq7uUj0B//Hn/gj/drQ==",
+                    Roles = Role.Student | Role.Tutor,
                 },
             };
 
@@ -420,6 +434,63 @@ public class LessonCategorySeeder
             };
 
             context.LessonCategories.AddRange(categories);
+            context.SaveChanges();
+        }
+    }
+}
+
+
+public class LessonSeeder
+{
+    public static void Seed(skillseekDbContext context)
+    {
+        if (!context.Lessons.Any())
+        {
+            var lessons = new List<Lesson>
+            {
+                new Lesson
+                {
+                    Date = new DateTime(2024, 12, 1, 14, 0, 0),
+                    Duration = TimeSpan.FromHours(1),
+                    Price = 30.00m,
+                    StudentId = context.Users.FirstOrDefault(c => c.Email == "Abdelrahman.Tarek@live.com")?.Id ?? 0,
+                    TutorId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    IsStudentInitiator = true,
+                    Status = LessonStatus.Proposed
+                },
+                new Lesson
+                {
+                    Date = new DateTime(2024, 12, 3, 10, 0, 0),
+                    Duration = TimeSpan.FromHours(2),
+                    Price = 60.00m,
+                    StudentId = context.Users.FirstOrDefault(c => c.Email == "Abdelrahman.Tarek@live.com")?.Id ?? 0,
+                    TutorId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    IsStudentInitiator = false,
+                    Status = LessonStatus.Booked
+                },
+                new Lesson
+                {
+                    Date = new DateTime(2024, 12, 5, 18, 0, 0),
+                    Duration = TimeSpan.FromMinutes(90),
+                    Price = 45.00m,
+                    StudentId = context.Users.FirstOrDefault(c => c.Email == "Abdelrahman.Tarek@live.com")?.Id ?? 0,
+                    TutorId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    IsStudentInitiator = true,
+                    Status = LessonStatus.Completed
+                },
+                new Lesson
+                {
+                    Date = new DateTime(2024, 12, 7, 16, 30, 0),
+                    Duration = TimeSpan.FromHours(2),
+                    Price = 50.00m,
+                    StudentId = context.Users.FirstOrDefault(c => c.Email == "Abdelrahman.Tarek@live.com")?.Id ?? 0,
+                    TutorId = context.Users.FirstOrDefault(c => c.Email == "Amr.Mostafa@live.com")?.Id ?? 0,
+                    IsStudentInitiator = false,
+                    Status = LessonStatus.Canceled
+                }
+            };
+
+            context.Lessons.AddRange(lessons);
             context.SaveChanges();
         }
     }

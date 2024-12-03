@@ -12,7 +12,7 @@ export class EvaluationService {
 
   constructor(private http: HttpClient) {}
 
-  getAllReviews(): Observable<{ pendingReviews: Review[]; receivedReviews: Review[]; sentReviews: Review[] }> {
+  getAllReviews(): Observable<{ pendingReviews: Review[]; receivedReviews: Review[]; sentReviews: Review[], recommendations: Review[] }> {
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -24,7 +24,7 @@ export class EvaluationService {
       Authorization: `Bearer ${token}`,
     });
 
-    return this.http.get<{ pendingReviews: Review[]; receivedReviews: Review[]; sentReviews: Review[] }>(this.apiUrl, {
+    return this.http.get<{ pendingReviews: Review[]; receivedReviews: Review[]; sentReviews: Review[], recommendations: Review[] }>(this.apiUrl, {
       headers,
     });
   }

@@ -9,11 +9,8 @@
       <input type="text" placeholder="Search contacts..." class="search-bar" />
     </div>
     <ul class="contacts-list">
-      <li
-        *ngFor="let contact of contacts"
-        [class.active]="contact.id === selectedContact?.id"
-        (click)="selectContact(contact)"
-      >
+      <li *ngFor="let contact of contacts" [class.active]="contact.id === selectedContact?.id"
+        (click)="selectContact(contact)">
         <div class="contact-avatar">
           <span>{{ contact.name[0] }}</span>
         </div>
@@ -25,7 +22,7 @@
       </li>
     </ul>
   </div>
-  
+
   <!-- Chat Section -->
   <div class="chat-section" *ngIf="selectedContact">
     <div class="chat-header">
@@ -43,23 +40,15 @@
     </div>
 
     <div class="chat-messages">
-      <div
-        *ngFor="let message of selectedContact.messages"
-        [class.sent]="message.sentBy === 'me'"
-        [class.received]="message.sentBy !== 'me'"
-        class="message"
-      >
+      <div *ngFor="let message of selectedContact.messages" [class.sent]="message.sentBy === 'me'"
+        [class.received]="message.sentBy !== 'me'" class="message">
         <p>{{ message.text }}</p>
         <span class="message-timestamp">{{ message.timestamp }}</span>
       </div>
     </div>
 
     <div class="chat-input">
-      <input
-        type="text"
-        placeholder="Write a message..."
-        [(ngModel)]="newMessage"
-      />
+      <input type="text" placeholder="Write a message..." [(ngModel)]="newMessage" />
       <button (click)="sendMessage()">Send</button>
     </div>
   </div>
@@ -71,7 +60,18 @@
 
   <!-- Right Sidebar -->
   <div class="right-sidebar" *ngIf="selectedContact">
-    <div class="propositions">
+    <!-- Tab Navigation -->
+    <div class="tabs">
+      <button class="tab" [class.active]="activeTab === 'propositions'" (click)="activeTab = 'propositions'">
+        Propositions
+      </button>
+      <button class="tab" [class.active]="activeTab === 'lessons'" (click)="activeTab = 'lessons'">
+        Lessons
+      </button>
+    </div>
+
+    <!-- Propositions Section -->
+    <div class="propositions" *ngIf="activeTab === 'propositions'">
       <h4>Propositions</h4>
       <button class="propose-pack">Propose a pack</button>
       <button class="propose-lesson">Propose a lesson</button>
@@ -88,7 +88,26 @@
       </div>
       <div class="no-propositions" *ngIf="propositions.length === 0">
         <p>No propositions pending.</p>
-      </div>      
+      </div>
     </div>
+
+    <!-- Lessons Section -->
+    <div class="lessons" *ngIf="activeTab === 'lessons'">
+      <h4>Lessons</h4>
+      <ul>
+        <li *ngFor="let lesson of lessons">
+          <p><strong>Topic:</strong> {{ lesson.topic }}</p>
+          <p><strong>Date:</strong> {{ lesson.date | date }}</p>
+          <p><strong>Duration:</strong> {{ lesson.duration }}</p>
+          <p><strong>Status:</strong> {{ lesson.status }}</p>
+        </li>
+      </ul>
+      <div class="no-lessons" *ngIf="lessons.length === 0">
+        <p>No lessons scheduled.</p>
+      </div>
+    </div>
+
+
+
   </div>
 </div>

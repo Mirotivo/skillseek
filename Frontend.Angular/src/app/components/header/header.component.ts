@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -10,22 +11,48 @@ import { Router } from '@angular/router';
 })
 export class HeaderComponent {
   isMenuOpen = false;
+  roles: string[] = [];
+  currentRole: 'student' | 'tutor' = 'student';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) { }
+
+
+  ngOnInit(): void {
+    this.roles = this.authService.getRoles();
+
+    const savedRole = this.authService.getCurrentRole();
+    if (savedRole && this.roles.includes(savedRole)) {
+      this.currentRole = savedRole as 'student' | 'tutor';
+    } else if (this.roles.length > 0) {
+      this.currentRole = this.roles[0] as 'student' | 'tutor';
+      this.authService.saveCurrentRole(this.currentRole);
+    }
+  }
+
+  switchRole(role: 'student' | 'tutor'): void {
+    if (this.currentRole !== role) {
+      this.currentRole = role;
+      this.authService.saveCurrentRole(role);
+    }
+  }
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
+  hasMultipleRoles(): boolean {
+    return this.roles.length > 1;
+  }
+
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    return !!this.authService.getToken();
   }
 
   logout() {
-    // Remove token from localStorage
-    localStorage.removeItem('token');
-
-    // Navigate to the home page
+    this.authService.logout();
     this.router.navigate(['/']);
   }
 }

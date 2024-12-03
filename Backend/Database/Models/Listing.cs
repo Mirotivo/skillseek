@@ -10,16 +10,20 @@ public enum LocationType
     StudentLocation = 1 << 2, // 1000
 }
 
-public class Listing
+public class Listing : IOwnableAccountable
 {
     [Key]
     public int Id { get; set; }
 
     public int UserId { get; set; }
 
+    [ForeignKey(nameof(Listing.UserId))]
+    public User User { get; set; }
+
     public int LessonCategoryId { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    [ForeignKey(nameof(Listing.LessonCategoryId))]
+    public LessonCategory LessonCategory { get; set; }
 
     public string Title { get; set; }
 
@@ -35,16 +39,15 @@ public class Listing
 
     public string AboutLesson { get; set; }
 
+    public bool IsVisible { get; set; } = true;
 
-    [ForeignKey(nameof(Listing.UserId))]
-    public User User { get; set; }
-
-    [ForeignKey(nameof(Listing.LessonCategoryId))]
-    public LessonCategory LessonCategory { get; set; }
+    public bool Active { get ; set; }
+    public DateTime CreatedAt { get ; set; }
+    public DateTime UpdatedAt { get ; set; }
+    public DateTime? DeletedAt { get ; set; }
 
     public Listing()
     {
         Description = string.Empty;
-        CreatedAt = DateTime.UtcNow;
     }
 }

@@ -44,8 +44,9 @@
         </button>
       </div>
       <div class="paypal-section" *ngIf="paymentMethod === 'paypal'">
-        <p>You will be redirected to PayPal to complete your purchase.</p>
-        <button class="paypal-button" (click)="onPay()">Pay with PayPal</button>
+        <!-- <p>You will be redirected to PayPal to complete your purchase.</p> -->
+        <!-- <button class="paypal-button" (click)="onPay()">Pay with PayPal</button> -->
+        <div id="paypal-button-container"></div>
       </div>
     </div>
   </div>

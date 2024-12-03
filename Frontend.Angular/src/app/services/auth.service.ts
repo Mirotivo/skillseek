@@ -33,7 +33,7 @@ export class AuthService {
     }
   }
 
-  async login(email: string, password: string): Promise<{ token: string } | null> {
+  async login(email: string, password: string): Promise<{ token: string; roles: string[] } | null> {
     try {
       const response = await fetch(`${this.apiUrl}/login`, {
         method: 'POST',
@@ -62,12 +62,32 @@ export class AuthService {
     localStorage.setItem('email', email);
   }
 
+  // Save roles as a JSON string
+  saveRoles(roles: string[]): void {
+    localStorage.setItem('roles', JSON.stringify(roles));
+  }
+  
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  getRoles(): string[] {
+    const roles = localStorage.getItem('roles');
+    return roles ? JSON.parse(roles) : [];
+  }
+  
+  saveCurrentRole(role: string): void {
+    localStorage.setItem('currentRole', role);
+  }
+
+  getCurrentRole(): string | null {
+    return localStorage.getItem('currentRole');
   }
 
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('email');
+    localStorage.removeItem('roles');
+    localStorage.removeItem('currentRole');
   }
 }

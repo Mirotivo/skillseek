@@ -11,6 +11,7 @@ import { EvaluationService } from '../../services/evaluation.service';
 import { Listing } from '../../models/listing';
 import { Review } from '../../models/review';
 import { Contact } from '../../models/contact';
+import { Transaction } from '../../models/transaction';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,7 +23,7 @@ export class DashboardComponent implements OnInit {
   user: any;
   messages: any[] = [];
   reviewsPending: Review[] = [];
-  payments: any[] = [];
+  payments: Transaction[] = [];
   listings: Listing[] = [];
 
   constructor(
@@ -47,7 +48,14 @@ export class DashboardComponent implements OnInit {
     this.evaluationService.getAllReviews().subscribe((data) => {
       this.reviewsPending = data.pendingReviews;
     });
-    this.payments = this.paymentService.getPayments();
+    this.paymentService.getPaymentHistory().subscribe({
+      next: (response) => {
+        this.payments = response.transactions;
+      },
+      error: (err) => {
+        console.error('Failed to load payment history:', err);
+      }
+    });
     this.listingService.getListings().subscribe({
       next: (data) => (this.listings = data),
       error: (err) => console.error('Failed to fetch listings:', err),

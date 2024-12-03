@@ -16,10 +16,13 @@ import { PropositionService } from '../../services/proposition.service';
 export class MessagesComponent implements OnInit {
   contacts: Contact[] = [];
   selectedContact: Contact | null = null; // Default to no selection
-  propositions: any[] = []; // Store propositions for the selected contact
   newMessage = '';
   loading = true; // Add a loading state
   messageSuccess: boolean = false; // Feedback for successful message sending
+
+  activeTab: string = 'propositions'; // Default active tab
+  propositions: any[] = [];
+  lessons: any[] = [];
 
   constructor(
     private chatService: ChatService,
@@ -36,7 +39,7 @@ export class MessagesComponent implements OnInit {
         this.contacts = data;
         this.selectedContact = this.contacts[0] || null; // Set the first contact as selected if available
         if (this.selectedContact) {
-          this.loadPropositions(this.selectedContact.id);
+          this.loadPropositions(this.selectedContact.studentId);
         }
         this.loading = false;
       },
@@ -49,17 +52,18 @@ export class MessagesComponent implements OnInit {
 
   selectContact(contact: Contact): void {
     this.selectedContact = contact;
-    this.loadPropositions(contact.id);
+    this.loadPropositions(contact.studentId);
   }
 
   loadPropositions(contactId: number): void {
     this.propositionService.getPropositions(contactId).subscribe({
-      next: (data) => {
-        this.propositions = data;
+      next: (response) => {
+        this.propositions = response.propositions;
+        this.lessons = response.lessons;
       },
       error: (err) => {
-        console.error('Failed to fetch propositions:', err);
-      },
+        console.error('Failed to fetch contact details:', err);
+      }
     });
   }
 
@@ -68,7 +72,7 @@ export class MessagesComponent implements OnInit {
       console.log(`Message to ${this.selectedContact.name}: ${this.newMessage}`);
 
       this.chatService.sendMessage({
-        recipientId: this.selectedContact.id,
+        recipientId: this.selectedContact.studentId,
         content: this.newMessage,
       }).subscribe({
         next: () => {

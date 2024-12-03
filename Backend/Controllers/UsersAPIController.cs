@@ -10,10 +10,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using System;
+using skillseek.Controllers;
 
 [Route("api/users")]
 [ApiController]
-public class UsersAPIController : ControllerBase
+public class UsersAPIController : BaseController
 {
 
     private readonly ILogger<UsersAPIController> _logger;
@@ -47,7 +48,9 @@ public class UsersAPIController : ControllerBase
         // Create new user
         User user = new User
         {
-            Email = model.Email
+            Email = model.Email,
+            Roles = Role.Tutor
+            // Roles = Role.Student
         };
         user.PasswordHash = _passwordHasher.HashPassword(user, model.Password);
 
@@ -61,7 +64,8 @@ public class UsersAPIController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => EF.Functions.Like(u.Email, model.Email));
+        var user = await _dbContext.Users
+            .FirstOrDefaultAsync(u => EF.Functions.Like(u.Email, model.Email));
 
         if (user != null)
         {
@@ -87,9 +91,17 @@ public class UsersAPIController : ControllerBase
                 var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
                 Console.WriteLine("Generated Token: " + tokenString);
 
+                // Decode the roles into a list of role names
+                var roles = Enum.GetValues(typeof(Role))
+                    .Cast<Role>()
+                    .Where(r => r != Role.None && user.Roles.HasFlag(r))
+                    .Select(r => r.ToString())
+                    .ToList();
+
                 return Ok(new
                 {
-                    token = tokenString
+                    token = tokenString,
+                    roles = roles
                 });
             }
         }
@@ -102,17 +114,7 @@ public class UsersAPIController : ControllerBase
     [HttpGet("me")]
     public IActionResult Get()
     {
-        var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-        if (userIdClaim == null)
-        {
-            return Unauthorized("User ID not found in token.");
-        }
-
-        // Parse the UserId
-        if (!int.TryParse(userIdClaim.Value, out var userId))
-        {
-            return BadRequest("Invalid User ID.");
-        }
+        var userId = GetUserId();
 
         // Fetch the user from the database or repository
         var user = _dbContext.Users
@@ -126,12 +128,12 @@ public class UsersAPIController : ControllerBase
                 DateOfBirth = u.DateOfBirth,
                 Phone = u.Phone,
                 Address = u.Address,
-                ProfileVerified = new List<string>(){},
-                LessonsCompleted = 0,
-                Evaluations = 0,
+                ProfileImage = u.ProfileImage,
                 SkypeId = u.SkypeId,
                 HangoutId = u.HangoutId,
-                ProfileImage = u.ProfileImage
+                ProfileVerified = new List<string>() { },
+                LessonsCompleted = 0,
+                Evaluations = 0,
             })
             .FirstOrDefault();
 
@@ -142,4 +144,34 @@ public class UsersAPIController : ControllerBase
 
         return Ok(user);
     }
+
+    [HttpPut("me")]
+    public IActionResult Update([FromBody] UserDto updatedUser)
+    {
+        var userId = GetUserId();
+
+        // Fetch the existing user from the database
+        var user = _dbContext.Users.FirstOrDefault(u => u.Id == userId);
+
+        if (user == null)
+        {
+            return NotFound("User not found.");
+        }
+
+        // Update only changed fields
+        user.FirstName = updatedUser.FirstName ?? user.FirstName;
+        user.LastName = updatedUser.LastName ?? user.LastName;
+        user.DateOfBirth = updatedUser.DateOfBirth ?? user.DateOfBirth;
+        user.Phone = updatedUser.Phone ?? user.Phone;
+        user.Address = updatedUser.Address ?? user.Address;
+        user.ProfileImage = updatedUser.ProfileImage ?? user.ProfileImage;
+        user.SkypeId = updatedUser.SkypeId ?? user.SkypeId;
+        user.HangoutId = updatedUser.HangoutId ?? user.HangoutId;
+
+        // Save changes to the database
+        _dbContext.SaveChanges();
+
+        return Ok(new { success = true, message = "Profile updated successfully." });
+    }
+
 }

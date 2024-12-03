@@ -7,7 +7,7 @@ namespace skillseek.Controllers;
 
 [Route("api/products")]
 [ApiController]
-public class ProductsAPIController : ControllerBase
+public class ProductsAPIController : BaseController
 {
     private readonly IMediator mediator;
     private readonly IProductService _productService;

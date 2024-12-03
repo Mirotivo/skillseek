@@ -6,7 +6,7 @@ namespace skillseek.Controllers;
 
 [Route("api/lesson/categories")]
 [ApiController]
-public class LessonCategoriesAPIController : ControllerBase
+public class LessonCategoriesAPIController : BaseController
 {
     private readonly ILessonCategoryService _categoryService;
 

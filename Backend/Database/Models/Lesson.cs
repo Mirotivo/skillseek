@@ -40,4 +40,9 @@ public class Lesson
     [Required]
     [MaxLength(20)]
     public LessonStatus Status { get; set; }
+
+    public override string ToString()
+    {
+        return $"Student: {Student.FirstName}, Tutor: {Tutor.FirstName}";
+    }
 }

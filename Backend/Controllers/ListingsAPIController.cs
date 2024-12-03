@@ -8,7 +8,7 @@ namespace skillseek.Controllers;
 
 [Route("api/listings")]
 [ApiController]
-public class ListingsAPIController : ControllerBase
+public class ListingsAPIController : BaseController
 {
     private readonly skillseekDbContext _dbContext;
 
@@ -69,17 +69,7 @@ public class ListingsAPIController : ControllerBase
     [HttpGet()]
     public IActionResult Get()
     {
-        var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-        if (userIdClaim == null)
-        {
-            return Unauthorized("User ID not found in token.");
-        }
-
-        // Parse the UserId
-        if (!int.TryParse(userIdClaim.Value, out var userId))
-        {
-            return BadRequest("Invalid User ID.");
-        }
+        var userId = GetUserId();
 
         // Fetch the data that can be directly translated to SQL
         var listings = _dbContext.Listings
@@ -122,5 +112,66 @@ public class ListingsAPIController : ControllerBase
 
         return Ok(result);
     }
+
+    [HttpPost("create-listing")]
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateListingDto createListingDto)
+    {
+        if (createListingDto == null)
+        {
+            return BadRequest("Invalid data.");
+        }
+
+        var userId = GetUserId();
+
+        // Validate and map the DTO to a Listing entity
+        var listing = new Listing
+        {
+            Title = createListingDto.Title,
+            AboutLesson = createListingDto.AboutLesson,
+            AboutYou = createListingDto.AboutYou,
+            Image = createListingDto.Image,
+            Locations = createListingDto.Locations
+                        .Aggregate(LocationType.None, (current, location) =>
+                            current | Enum.Parse<LocationType>(location, true)),
+            LessonCategoryId = createListingDto.LessonCategoryId,
+            UserId = userId,
+            HourRate = createListingDto.HourRate
+        };
+
+        // Save to the database
+        await _dbContext.Listings.AddAsync(listing);
+        await _dbContext.SaveChangesAsync();
+
+        // Map the saved entity to a DTO for the response
+        var result = new ListingDto
+        {
+            Id = listing.Id,
+            TutorId = userId,
+            Name = listing.User?.FirstName, // Assuming `User` is eager-loaded
+            Category = listing.LessonCategory?.Name, // Assuming `LessonCategory` is eager-loaded
+            Title = listing.Title,
+            Image = listing.Image,
+            LessonsTaught = listing.LessonCategory?.Name,
+            Locations = Enum.GetValues(typeof(LocationType))
+                            .Cast<LocationType>()
+                            .Where(location => (listing.Locations & location) == location && location != LocationType.None)
+                            .Select(location => location.ToString())
+                            .ToList(),
+            AboutLesson = listing.AboutLesson,
+            AboutYou = listing.AboutYou,
+            Rate = $"{listing.HourRate}/h",
+            Rates = new RatesDto
+            {
+                Hourly = $"{listing.HourRate}/h",
+                FiveHours = $"{listing.HourRate * 5}/h",
+                TenHours = $"{listing.HourRate * 10}/h"
+            },
+            SocialPlatforms = new List<string> { "Messenger", "Linkedin", "Facebook", "Email" }
+        };
+
+        return CreatedAtAction(nameof(Get), new { id = listing.Id }, result);
+    }
+
 }
 

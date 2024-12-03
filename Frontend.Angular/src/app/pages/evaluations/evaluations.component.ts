@@ -16,8 +16,10 @@ export class EvaluationsComponent implements OnInit {
   pendingReviews: Review[] = [];
   receivedReviews: Review[] = [];
   sentReviews: Review[] = [];
+  recommendations: Review[] = [];
   remainingReviews = 0;
-  activeTab = 'received';
+  activeTab = 'reviews';
+  activeSubTab = 'received';
 
   constructor(private evaluationService: EvaluationService) {}
 
@@ -30,11 +32,12 @@ export class EvaluationsComponent implements OnInit {
       this.pendingReviews = data.pendingReviews;
       this.receivedReviews = data.receivedReviews;
       this.sentReviews = data.sentReviews;
+      this.recommendations = data.recommendations;
       // this.remainingReviews = data.pendingReviews.length;
     });
     }
 
   setActiveTab(tab: string): void {
-    this.activeTab = tab;
+    this.activeSubTab = tab;
   }
 }

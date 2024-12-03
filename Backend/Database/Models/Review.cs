@@ -2,7 +2,13 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Review
+public enum ReviewType
+{
+    Review = 1,       // For evaluations
+    Recommendation = 2 // For endorsements
+}
+
+public class Review : IAccountable
 {
     [Key]
     public int Id { get; set; }
@@ -20,6 +26,9 @@ public class Review
     public User Reviewee { get; set; }
 
     [Required]
+    public ReviewType Type { get; set; } // Differentiates Review vs Recommendation
+
+    [Required]
     [Range(1, 5)]
     public int Rating { get; set; }
 
@@ -29,11 +38,13 @@ public class Review
     [MaxLength(500)]
     public string Comments { get; set; }
 
-    [Required]
-    public DateTime CreatedAt { get; set; }
+    public bool Active { get ; set; }
+    public DateTime CreatedAt { get ; set; }
+    public DateTime UpdatedAt { get ; set; }
+    public DateTime? DeletedAt { get ; set; }
 
     public Review()
     {
-        CreatedAt = DateTime.UtcNow;
+
     }
 }

@@ -8,7 +8,7 @@ namespace skillseek.Controllers;
 
 [Route("api/lessons")]
 [ApiController]
-public class LessonsAPIController : ControllerBase
+public class LessonsAPIController : BaseController
 {
     private readonly skillseekDbContext _dbContext;
 
@@ -20,16 +20,7 @@ public class LessonsAPIController : ControllerBase
     [HttpPost("proposeLesson")]
     public IActionResult ProposeLesson([FromBody] LessonDto lessonDto)
     {
-        var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-        if (userIdClaim == null)
-        {
-            return Unauthorized("User ID not found in token.");
-        }
-
-        if (!int.TryParse(userIdClaim.Value, out var userId))
-        {
-            return BadRequest("Invalid User ID.");
-        }
+        var userId = GetUserId();
 
         var lesson = new Lesson
         {
@@ -51,23 +42,39 @@ public class LessonsAPIController : ControllerBase
     [HttpGet("{contactId}")]
     public IActionResult GetPropositions(int contactId)
     {
+        // Fetch Propositions
         var propositions = _dbContext.Lessons
-            .Where(l => l.TutorId == contactId || l.StudentId == contactId)
-            .Select(l => new
+            .Where(p => p.Status == LessonStatus.Proposed)
+            .Where(p => p.StudentId == contactId)
+            .Select(p => new PropositionDto
             {
-                l.Date,
-                l.Duration,
-                l.Price,
-                l.Status
+                Id = p.Id,
+                Date = p.Date,
+                Duration = p.Duration.ToString(@"hh\:mm"),
+                Price = p.Price,
+                Status = p.Status.ToString()
             })
             .ToList();
 
-        if (!propositions.Any())
-        {
-            return NotFound("No propositions found for this contact.");
-        }
+        // Fetch Lessons
+        var lessons = _dbContext.Lessons
+            .Where(p => p.Status == LessonStatus.Booked || p.Status == LessonStatus.Completed || p.Status == LessonStatus.Canceled)
+            .Where(l => l.StudentId == contactId)
+            .Select(l => new LessonDto
+            {
+                Id = l.Id,
+                Topic = "Lesson",
+                Date = l.Date,
+                Duration = l.Duration,
+                Status = l.Status.ToString()
+            })
+            .ToList();
 
-        return Ok(propositions);
+        return Ok(new
+        {
+            Propositions = propositions,
+            Lessons = lessons
+        });
     }
 }
 

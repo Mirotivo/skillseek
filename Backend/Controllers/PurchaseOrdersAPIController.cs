@@ -14,7 +14,7 @@ namespace skillseek.Controllers;
 
 [Route("api/purchaseorders")]
 [ApiController]
-public class PurchaseOrdersAPIController : ControllerBase
+public class PurchaseOrdersAPIController : BaseController
 {
     private readonly IMapper _mapper;
     private readonly IPurchaseOrderService _purchaseOrderService;

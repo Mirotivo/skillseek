@@ -8,7 +8,7 @@ namespace skillseek.Controllers;
 
 [Route("api/evaluations")]
 [ApiController]
-public class EvaluationsAPIController : ControllerBase
+public class EvaluationsAPIController : BaseController
 {
     private readonly skillseekDbContext _dbContext;
 
@@ -20,51 +20,18 @@ public class EvaluationsAPIController : ControllerBase
     [HttpGet()]
     public IActionResult Get()
     {
-        var userIdClaim = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-        if (userIdClaim == null)
-        {
-            return Unauthorized("User ID not found in token.");
-        }
-
-        // Parse the UserId
-        if (!int.TryParse(userIdClaim.Value, out var userId))
-        {
-            return BadRequest("Invalid User ID.");
-        }
+        var userId = GetUserId();
 
         // Fetch reviews and group them
-        var pendingReviews = new List<ReviewDto>
-        {
-            new ReviewDto
-            {
-                Name = "Aziz",
-                Subject = "Maths student",
-                Message = "How did your lesson go?",
-                Avatar = null
-            },
-            new ReviewDto
-            {
-                Name = "Alice",
-                Subject = "Maths student",
-                Message = "How did your lesson go?",
-                Avatar = null
-            },
-            new ReviewDto
-            {
-                Name = "Eloise",
-                Subject = "Maths student",
-                Message = "How did your lesson go?",
-                Avatar = null
-            }
-        };
+        var pendingReviews = new List<ReviewDto>{};
 
         var receivedReviews = _dbContext.Reviews
-            .Where(r => r.RevieweeId == userId)
+            .Where(r => r.Type == ReviewType.Review && r.RevieweeId == userId)
             .Include(r => r.Reviewer)
             .Include(r => r.Reviewee)
             .Select(r => new ReviewDto
             {
-                Name = r.Reviewer.Email ?? "Unknown",
+                Name = r.Reviewer.FirstName ?? "Unknown",
                 Subject = r.Title,
                 Feedback = r.Comments,
                 Avatar = null
@@ -72,17 +39,30 @@ public class EvaluationsAPIController : ControllerBase
             .ToList();
 
         var sentReviews = _dbContext.Reviews
-            .Where(r => r.ReviewerId == userId)
+            .Where(r => r.Type == ReviewType.Review && r.ReviewerId == userId)
             .Include(r => r.Reviewer)
             .Include(r => r.Reviewee)
             .Select(r => new ReviewDto
             {
-                Name = r.Reviewee.Email ?? "Unknown",
+                Name = r.Reviewee.FirstName ?? "Unknown",
                 Subject = r.Title,
                 Feedback = r.Comments,
                 Avatar = null
             })
             .ToList();
+
+        var recommendations = _dbContext.Reviews
+            .Where(r =>r.Type == ReviewType.Recommendation && r.RevieweeId == userId)
+            .Include(r => r.Reviewer)
+            .Select(r => new ReviewDto
+            {
+                Name = r.Reviewee.FirstName ?? "Unknown",
+                Subject = r.Title,
+                Feedback = r.Comments,
+                Avatar = null
+            })
+            .ToList();
+
 
         if (!pendingReviews.Any() && !receivedReviews.Any() && !sentReviews.Any())
         {
@@ -93,7 +73,8 @@ public class EvaluationsAPIController : ControllerBase
         {
             PendingReviews = pendingReviews,
             ReceivedReviews = receivedReviews,
-            SentReviews = sentReviews
+            SentReviews = sentReviews,
+            Recommendations = recommendations
         });
     }
 }

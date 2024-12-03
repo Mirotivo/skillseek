@@ -23,6 +23,7 @@ var key = builder.Configuration.GetValue<string>("Jwt:Key");
 // Add services to the container.
 builder.Services.AddSignalR();
 builder.Services.AddTransient<CustomMiddleware>();
+builder.Services.AddTransient<GlobalExceptionMiddleware>();
 builder.Services.AddSingleton<Dictionary<string, string>>(new Dictionary<string, string>());
 // var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 // builder.Services.AddDbContext<skillseekDbContext>(options =>
@@ -36,12 +37,8 @@ string connString = builder.Configuration.GetConnectionString("Sqlite") ?? "";
 builder.Services.AddDbContext<skillseekDbContext>(option => option.UseSqlite(connString));
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
-builder.Services.AddTransient<IStationGroupService, StationGroupService>();
-builder.Services.AddTransient<ICategoryService, CategoryService>();
-builder.Services.AddTransient<IProductService, ProductService>();
+builder.Services.AddTransients(Assembly.GetExecutingAssembly());
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
-builder.Services.AddTransient<IPurchaseOrderService, PurchaseOrderService>();
-builder.Services.AddTransient<ILessonCategoryService, LessonCategoryService>();
 builder.Services
         .AddAuthentication(options =>
         {
@@ -94,7 +91,10 @@ builder.Services
 
         });
 
+// Configurations
+builder.Services.Configure<PayPalOptions>(builder.Configuration.GetSection("PayPal"));
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -153,6 +153,7 @@ app.UseCors(options =>
 
 app.UseAuthorization();
 app.UseMiddleware<CustomMiddleware>();
+app.UseMiddleware<GlobalExceptionMiddleware>();
 // app.UseAuthentication(); // Add authentication middleware
 
 // app.MapControllers();

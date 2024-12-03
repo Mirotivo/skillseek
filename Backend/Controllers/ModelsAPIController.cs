@@ -13,10 +13,11 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
+using skillseek.Controllers;
 
 [Route("api/models")]
 [ApiController]
-public class ModelsAPIController : ControllerBase
+public class ModelsAPIController : BaseController
 {
 
     private readonly ILogger<ModelsAPIController> _logger;

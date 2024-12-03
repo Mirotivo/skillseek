@@ -11,6 +11,7 @@ public static class DbInitializer
         FriendshipSeeder.Seed(context);
 
         LessonCategorySeeder.Seed(context);
+        LessonSeeder.Seed(context);
         ListingSeeder.Seed(context);
         ReviewSeeder.Seed(context);
         ChatSeeder.Seed(context);

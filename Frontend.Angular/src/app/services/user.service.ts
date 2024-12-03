@@ -22,4 +22,14 @@ export class UserService {
 
     return this.http.get<User>(`${this.apiUrl}/me`, { headers });
   }
+
+  updateUser(user: User): Observable<void> {
+    const token = localStorage.getItem('token');
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.put<void>(`${this.apiUrl}/me`, user, { headers });
+  }  
 }

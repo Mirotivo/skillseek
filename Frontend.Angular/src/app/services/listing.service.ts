@@ -8,10 +8,9 @@ import { environment } from '../environments/environment';
   providedIn: 'root'
 })
 export class ListingService {
-
   private apiUrl = `${environment.apiUrl}/listings`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getRandomListings(): Observable<Listing[]> {
     const token = localStorage.getItem('token');
@@ -33,4 +32,14 @@ export class ListingService {
     return this.http.get<Listing[]>(this.apiUrl, { headers });
   }
 
+  createListing(processedListing: Listing): Observable<Listing> {
+    const token = localStorage.getItem('token');
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+
+    return this.http.post<Listing>(`${this.apiUrl}/create-listing`, processedListing, { headers });
+  }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Chat
+public class Chat : ICreatable
 {
     [Key]
     public int Id { get; set; }
@@ -20,14 +20,12 @@ public class Chat
     [ForeignKey(nameof(Chat.TutorId))]
     public User Tutor { get; set; }
 
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get ; set; }
 
-    // Navigation property for the associated messages
     public List<Message> Messages { get; set; }
 
     public Chat()
     {
         Messages = new List<Message>();
-        CreatedAt = DateTime.UtcNow;
     }
 }

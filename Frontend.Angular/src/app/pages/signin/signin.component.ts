@@ -53,6 +53,7 @@ export class SigninComponent {
 
       if (result) {
         this.authService.saveToken(result.token);
+        this.authService.saveRoles(result.roles);
         this.authService.saveEmail(this.loginModel.email);
 
         // Redirect to returnUrl or dashboard

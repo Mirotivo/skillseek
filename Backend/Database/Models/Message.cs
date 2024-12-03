@@ -25,7 +25,7 @@ public class Message
     public User Recipient { get; set; }
 
     [Required]
-    public string Content { get; set; } // The message text
+    public string Content { get; set; }
 
     public DateTime SentAt { get; set; }
 

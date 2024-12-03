@@ -37,13 +37,13 @@ export class PropositionService {
       .padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   }
 
-  getPropositions(contactId: number): Observable<any[]> {
+  getPropositions(contactId: number): Observable<{ propositions: any[]; lessons: any[] }> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
   
-    return this.http.get<any[]>(`${this.apiUrl}/${contactId}`, { headers });
+    return this.http.get<{ propositions: any[]; lessons: any[] }>(`${this.apiUrl}/${contactId}`, { headers });
   }
   
 }
