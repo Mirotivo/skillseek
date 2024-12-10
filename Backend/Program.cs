@@ -92,6 +92,7 @@ builder.Services
         });
 
 // Configurations
+builder.Services.Configure<StripeOptions>(builder.Configuration.GetSection("Stripe"));
 builder.Services.Configure<PayPalOptions>(builder.Configuration.GetSection("PayPal"));
 
 builder.Services.AddHttpContextAccessor();

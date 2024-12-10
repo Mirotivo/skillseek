@@ -1,144 +1,72 @@
 <app-header></app-header>
 <app-navigation-bar></app-navigation-bar>
 <div class="landing-page">
-    <div class="listings-page">
-        <!-- Sidebar -->
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <button class="create-listing-btn" (click)="openCreateListing()">Create a Listing</button>
-            <ul class="listings">
-                <li *ngFor="let listing of listings" [class.active]="listing?.id === selectedListing?.id"
-                    (click)="selectListing(listing)">
-                    <div class="listing-info">
-                        <img [src]="listing.image" alt="{{ listing.title }}" />
-                        <div class="listing-details">
-                            <h3>{{ listing.title }}</h3>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
+  <div class="listings-page">
+    <!-- Sidebar -->
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <button class="create-listing-btn" (click)="openModal()">Create a Listing</button>
+      <ul class="listings">
+        <li *ngFor="let listing of listings" [class.active]="listing?.id === selectedListing?.id"
+          (click)="selectListing(listing)">
+          <div class="listing-info">
+            <img [src]="listing.image" alt="{{ listing.title }}" />
+            <div class="listing-details">
+              <h3>{{ listing.title }}</h3>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
 
-<!-- Modal for Create Listing -->
-<div class="create-listing-modal" *ngIf="showCreateListing">
-    <div class="modal-content">
-      <h2>Create a New Listing</h2>
-      <form (ngSubmit)="submitCreateListing()">
-        <label for="title">Title:</label>
-        <input id="title" [(ngModel)]="newListing.title" name="title" required />
-  
-        <label for="image">Image URL:</label>
-        <input id="image" [(ngModel)]="newListing.image" name="image" required />
-  
-        <label for="lessonsTaught">Lessons Taught:</label>
-        <input id="lessonsTaught" [(ngModel)]="newListing.lessonsTaught" name="lessonsTaught" />
-  
-        <label for="locations">Locations:</label>
-        <select id="locations" [(ngModel)]="newListing.locations" name="locations" multiple>
-          <option *ngFor="let location of locationOptions" [value]="location">{{ location }}</option>
-        </select>
-  
-        <label for="aboutLesson">About the Lesson:</label>
-        <textarea id="aboutLesson" [(ngModel)]="newListing.aboutLesson" name="aboutLesson"></textarea>
-  
-        <label for="aboutYou">About You:</label>
-        <textarea id="aboutYou" [(ngModel)]="newListing.aboutYou" name="aboutYou"></textarea>
-  
-        <!-- <fieldset>
-          <legend>Rates</legend>
-          <label for="hourlyRate">Hourly Rate:</label>
-          <input
-            id="hourlyRate"
-            type="number"
-            [(ngModel)]="newListing.rates.hourly"
-            name="hourlyRate"
-            placeholder="Hourly Rate"
-            required
-          />
-  
-          <label for="fiveHoursRate">5 Hours Rate:</label>
-          <input
-            id="fiveHoursRate"
-            type="number"
-            [(ngModel)]="newListing.rates.fiveHours"
-            name="fiveHoursRate"
-            placeholder="5 Hours Rate"
-          />
-  
-          <label for="tenHoursRate">10 Hours Rate:</label>
-          <input
-            id="tenHoursRate"
-            type="number"
-            [(ngModel)]="newListing.rates.tenHours"
-            name="tenHoursRate"
-            placeholder="10 Hours Rate"
-          />
-        </fieldset> -->
-  
-        <label for="socialPlatforms">Social Platforms:</label>
-        <select id="socialPlatforms" [(ngModel)]="newListing.socialPlatforms" name="socialPlatforms" multiple>
-          <option *ngFor="let platform of socialPlatformOptions" [value]="platform">{{ platform }}</option>
-        </select>
-  
-        <label for="lessonCategory">Lesson Category:</label>
-        <select id="lessonCategory" [(ngModel)]="newListing.lessonCategoryId" name="lessonCategoryId" required>
-          <option *ngFor="let category of lessonCategories" [value]="category.id">
-            {{ category.name }}
-          </option>
-        </select>
-  
-        <button type="submit">Create Listing</button>
-        <button type="button" (click)="closeCreateListing()">Cancel</button>
-      </form>
+    <!-- Main Content -->
+    <div class="main-content" *ngIf="selectedListing">
+      <div class="header">
+        <h2>{{ selectedListing.title }}</h2>
+        <button class="premium-btn">Go premium</button>
+      </div>
+
+      <div class="listing-section">
+        <h4>Lessons taught</h4>
+        <p>{{ selectedListing.lessonsTaught }}</p>
+      </div>
+
+      <div class="listing-section">
+        <h4>Location</h4>
+        <div class="location-options">
+          <span *ngFor="let location of selectedListing.locations">{{ location }}</span>
+        </div>
+      </div>
+
+      <div class="listing-section">
+        <h4>About the Lesson</h4>
+        <p>{{ selectedListing.aboutLesson }}</p>
+      </div>
+
+      <div class="listing-section">
+        <h4>About You</h4>
+        <p>{{ selectedListing.aboutYou }}</p>
+      </div>
+
+      <div class="listing-section">
+        <h4>Rates</h4>
+        <ul>
+          <li>Hourly rate: {{ selectedListing.rates.hourly }}</li>
+          <li>5 hours: {{ selectedListing.rates.fiveHours }}</li>
+          <li>10 hours: {{ selectedListing.rates.tenHours }}</li>
+        </ul>
+      </div>
+
+      <div class="listing-section">
+        <h4>Recommendations</h4>
+        <div class="recommendations">
+          <span *ngFor="let platform of selectedListing.socialPlatforms">{{ platform }}</span>
+        </div>
+      </div>
     </div>
   </div>
-  
 
-
-
-        <!-- Main Content -->
-        <div class="main-content" *ngIf="selectedListing">
-            <div class="header">
-                <h2>{{ selectedListing.title }}</h2>
-                <button class="premium-btn">Go premium</button>
-            </div>
-
-            <div class="listing-section">
-                <h4>Lessons taught</h4>
-                <p>{{ selectedListing.lessonsTaught }}</p>
-            </div>
-
-            <div class="listing-section">
-                <h4>Location</h4>
-                <div class="location-options">
-                    <span *ngFor="let location of selectedListing.locations">{{ location }}</span>
-                </div>
-            </div>
-
-            <div class="listing-section">
-                <h4>About the Lesson</h4>
-                <p>{{ selectedListing.aboutLesson }}</p>
-            </div>
-
-            <div class="listing-section">
-                <h4>About You</h4>
-                <p>{{ selectedListing.aboutYou }}</p>
-            </div>
-
-            <div class="listing-section">
-                <h4>Rates</h4>
-                <ul>
-                    <li>Hourly rate: {{ selectedListing.rates.hourly }}</li>
-                    <li>5 hours: {{ selectedListing.rates.fiveHours }}</li>
-                    <li>10 hours: {{ selectedListing.rates.tenHours }}</li>
-                </ul>
-            </div>
-
-            <div class="listing-section">
-                <h4>Recommendations</h4>
-                <div class="recommendations">
-                    <span *ngFor="let platform of selectedListing.socialPlatforms">{{ platform }}</span>
-                </div>
-            </div>
-        </div>
-    </div>
+  <!-- Modal for Create Listing -->
+  <app-modal *ngIf="isModalOpen" [isOpen]="isModalOpen" (onClose)="closeModal()">
+    <app-create-listing (onClose)="closeModal()"></app-create-listing>
+  </app-modal>

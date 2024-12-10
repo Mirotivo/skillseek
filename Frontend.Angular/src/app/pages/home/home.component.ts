@@ -6,14 +6,17 @@ import { LessonCategory } from '../../models/lesson-category';
 import { Listing } from '../../models/listing';
 import { ListingService } from '../../services/listing.service';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
+  searchQuery: string = '';
+
   categories: LessonCategory[] = [];
 
   tutors: Listing[] = [];
@@ -66,6 +69,15 @@ export class HomeComponent {
         console.error('Failed to fetch tutors', err);
       },
     });
+  }
+
+  performSearch(): void {
+    if (!this.searchQuery.trim()) {
+      return;
+    }
+
+    // Navigate to the SearchResultsComponent with the query string
+    this.router.navigate(['/search-results'], { queryParams: { query: this.searchQuery } });
   }
 
   navigateToPayment(listingId: number): void {

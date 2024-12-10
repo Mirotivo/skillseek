@@ -11,9 +11,11 @@ import { EvaluationsComponent } from './pages/evaluations/evaluations.component'
 import { SignupComponent } from './pages/signup/signup.component';
 import { PaymentComponent } from './pages/payment/payment.component';
 import { BookingComponent } from './pages/booking/booking.component';
+import { SearchResultsComponent } from './pages/search-results/search-results.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
+    { path: 'search-results', component: SearchResultsComponent },
     { path: 'signup', component: SignupComponent },
     { path: 'signin', component: SigninComponent },
     { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },

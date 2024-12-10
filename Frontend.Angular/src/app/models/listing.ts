@@ -9,16 +9,16 @@
     category: string;
     title: string;
     image: string;
+    imageFile: File;
     lessonsTaught: string;
     location: string;
     locations: string[];
     aboutLesson: string;
     aboutYou: string;
-    rate: string;
     rates: {
-      hourly: string;
-      fiveHours: string;
-      tenHours: string;
+      hourly: number;
+      fiveHours: number;
+      tenHours: number;
     };
     socialPlatforms: string[];
   }

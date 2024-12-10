@@ -33,7 +33,7 @@ public class WalletsAPIController : BaseController
             return NotFound("Wallet not found.");
 
         // Call PayPal API to create payment
-        var payPalResponse = await _payPalPaymentService.CreateOrder(request.Amount, "USD", "", "");
+        var payPalResponse = await _payPalPaymentService.CreateOrder(request.Amount, "AUD", "", "");
         if (payPalResponse.StatusCode != System.Net.HttpStatusCode.Created)
             return BadRequest("Payment creation failed.");
 
@@ -49,8 +49,8 @@ public class WalletsAPIController : BaseController
             Amount = request.Amount,
             PlatformFee = 0,
             TransactionDate = DateTime.UtcNow,
-            Status = "Completed",
-            PaymentMethod = request.PaymentMethod
+            Status = TransactionStatus.Completed,
+            PaymentMethod = PaymentMethod.Wallet
         };
         _dbContext.Transactions.Add(transaction);
 

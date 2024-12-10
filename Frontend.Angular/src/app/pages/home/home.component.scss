@@ -202,7 +202,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     text-shadow: 0 0 5px #f57c00;
   }
   50% {

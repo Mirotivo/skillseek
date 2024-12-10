@@ -7,6 +7,10 @@ public class OrderItem
     public int ID { get; set; }
     [Required]
     public int CategoryID { get; set; }
+    [ForeignKey(nameof(OrderItem.CategoryID))]
+    public Category? Category { get; set; }
+    [ForeignKey(nameof(OrderItem.PurchaseOrderID))]
+    public PurchaseOrder? PurchaseOrder { get; set; }
     [Required]
     public int PurchaseOrderID { get; set; }
     public string Title { get; set; }
@@ -14,8 +18,9 @@ public class OrderItem
     public decimal Price { get; set; }
     public int Quantity { get; set; }
 
-    [ForeignKey("CategoryID")]
-    public Category Category { get; set; }
-    [ForeignKey("PurchaseOrderID")]
-    public PurchaseOrder PurchaseOrder { get; set; }
+    public OrderItem()
+    {
+        Title = string.Empty;
+        Description = string.Empty;
+    }
 }

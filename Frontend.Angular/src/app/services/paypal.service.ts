@@ -8,7 +8,7 @@ export class PaypalService {
   loadPayPalScript(): Promise<void> {
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = `https://www.paypal.com/sdk/js?client-id=${environment.payPalClientId}`;
+      script.src = `https://www.paypal.com/sdk/js?client-id=${environment.payPalClientId}&currency=AUD`;
       script.async = true;
       script.onload = () => resolve();
       script.onerror = () => reject('PayPal SDK could not be loaded.');

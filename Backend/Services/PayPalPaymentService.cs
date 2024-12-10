@@ -24,19 +24,19 @@ public class PayPalPaymentService : IPayPalPaymentService
         _client = new PayPalHttpClient(environment);
     }
 
-public async Task<PayPalHttp.HttpResponse> CreateOrder(decimal amount, string currency, string returnUrl, string cancelUrl)
-{
-    var request = new OrdersCreateRequest();
-    request.Prefer("return=representation");
-    request.RequestBody(new OrderRequest
+    public async Task<PayPalHttp.HttpResponse> CreateOrder(decimal amount, string currency, string returnUrl, string cancelUrl)
     {
-        CheckoutPaymentIntent = "CAPTURE",
-        ApplicationContext = new ApplicationContext
+        var request = new OrdersCreateRequest();
+        request.Prefer("return=representation");
+        request.RequestBody(new OrderRequest
         {
-            ReturnUrl = returnUrl,
-            CancelUrl = cancelUrl
-        },
-        PurchaseUnits = new List<PurchaseUnitRequest>
+            CheckoutPaymentIntent = "CAPTURE",
+            ApplicationContext = new ApplicationContext
+            {
+                ReturnUrl = returnUrl,
+                CancelUrl = cancelUrl
+            },
+            PurchaseUnits = new List<PurchaseUnitRequest>
         {
             new PurchaseUnitRequest
             {
@@ -47,19 +47,19 @@ public async Task<PayPalHttp.HttpResponse> CreateOrder(decimal amount, string cu
                 }
             }
         }
-    });
+        });
 
-    try
-    {
-        var response = await _client.Execute(request);
-        return response;
+        try
+        {
+            var response = await _client.Execute(request);
+            return response;
+        }
+        catch (HttpException ex)
+        {
+            Console.WriteLine($"Error: {ex.StatusCode} {ex.Message}");
+            throw;
+        }
     }
-    catch (HttpException ex)
-    {
-        Console.WriteLine($"Error: {ex.StatusCode} {ex.Message}");
-        throw;
-    }
-}
 
     public async Task<PayPalHttp.HttpResponse> CaptureOrder(string orderId)
     {

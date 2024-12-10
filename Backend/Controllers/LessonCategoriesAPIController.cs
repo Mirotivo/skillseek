@@ -9,10 +9,12 @@ namespace skillseek.Controllers;
 public class LessonCategoriesAPIController : BaseController
 {
     private readonly ILessonCategoryService _categoryService;
+    private readonly ILogger<LessonCategoriesAPIController> _logger;
 
-    public LessonCategoriesAPIController(ILessonCategoryService categoryService)
+    public LessonCategoriesAPIController(ILessonCategoryService categoryService, ILogger<LessonCategoriesAPIController> logger)
     {
         _categoryService = categoryService;
+        _logger = logger;
     }
 
     [HttpGet("dashboard")]

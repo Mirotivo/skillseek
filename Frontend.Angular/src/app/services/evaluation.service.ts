@@ -28,4 +28,18 @@ export class EvaluationService {
       headers,
     });
   }
+
+  submitReview(review: Review): Observable<any> {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      console.error('No token found in localStorage');
+      throw new Error('No authentication token available');
+    }
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.post(`${this.apiUrl}/review`, review, { headers });
+  }
 }

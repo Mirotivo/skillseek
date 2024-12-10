@@ -1,0 +1,70 @@
+<h2>Create a New Listing</h2>
+<form (ngSubmit)="submitCreateListing()">
+  <label for="title">Title:</label>
+  <input id="title" [(ngModel)]="newListing.title" name="title" required />
+
+  <!-- <label for="image">Image URL:</label>
+  <input id="image" [(ngModel)]="newListing.image" name="image" required /> -->
+  <label for="image">Upload Image:</label>
+  <input id="image" type="file" (change)="onImageSelected($event)" required />
+
+  <label for="lessonsTaught">Lessons Taught:</label>
+  <input id="lessonsTaught" [(ngModel)]="newListing.lessonsTaught" name="lessonsTaught" />
+
+  <label for="locations">Locations:</label>
+  <select id="locations" [(ngModel)]="newListing.locations" name="locations" multiple>
+    <option *ngFor="let location of locationOptions" [value]="location">{{ location }}</option>
+  </select>
+
+  <label for="aboutLesson">About the Lesson:</label>
+  <textarea id="aboutLesson" [(ngModel)]="newListing.aboutLesson" name="aboutLesson"></textarea>
+
+  <label for="aboutYou">About You:</label>
+  <textarea id="aboutYou" [(ngModel)]="newListing.aboutYou" name="aboutYou"></textarea>
+
+  <fieldset>
+  <legend>Rates</legend>
+  <label for="hourlyRate">Hourly Rate:</label>
+  <input
+    id="hourlyRate"
+    type="number"
+    [(ngModel)]="rates.hourly"
+    name="hourlyRate"
+    placeholder="Hourly Rate"
+    required
+  />
+
+  <label for="fiveHoursRate">5 Hours Rate:</label>
+  <input
+    id="fiveHoursRate"
+    type="number"
+    [(ngModel)]="rates.fiveHours"
+    name="fiveHoursRate"
+    placeholder="5 Hours Rate"
+  />
+
+  <label for="tenHoursRate">10 Hours Rate:</label>
+  <input
+    id="tenHoursRate"
+    type="number"
+    [(ngModel)]="rates.tenHours"
+    name="tenHoursRate"
+    placeholder="10 Hours Rate"
+  />
+</fieldset>
+
+  <label for="socialPlatforms">Social Platforms:</label>
+  <select id="socialPlatforms" [(ngModel)]="newListing.socialPlatforms" name="socialPlatforms" multiple>
+    <option *ngFor="let platform of socialPlatformOptions" [value]="platform">{{ platform }}</option>
+  </select>
+
+  <label for="lessonCategory">Lesson Category:</label>
+  <select id="lessonCategory" [(ngModel)]="newListing.lessonCategoryId" name="lessonCategoryId" required>
+    <option *ngFor="let category of lessonCategories" [value]="category.id">
+      {{ category.name }}
+    </option>
+  </select>
+
+  <button type="submit">Create Listing</button>
+  <button type="button" (click)="closeModal()">Cancel</button>
+</form>

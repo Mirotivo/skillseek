@@ -7,38 +7,19 @@ import { Listing } from '../../models/listing';
 import { LessonCategory } from '../../models/lesson-category';
 import { ListingService } from '../../services/listing.service';
 import { CategoryService } from '../../services/category.service';
+import { ModalComponent } from '../../components/modal/modal.component';
+import { CreateListingComponent } from '../../components/create-listing/create-listing.component';
 
 @Component({
   selector: 'app-listings',
-  imports: [CommonModule, FormsModule, HeaderComponent, NavigationBarComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, NavigationBarComponent, ModalComponent, CreateListingComponent],
   templateUrl: './listings.component.html',
   styleUrl: './listings.component.scss'
 })
 export class ListingsComponent {
-  locationOptions: string[] = ['Webcam', 'TutorLocation', 'StudentLocation'];
-  socialPlatformOptions: string[] = ['Facebook', 'Instagram', 'Twitter', 'LinkedIn', 'Email']; // Predefined platforms
-
   listings: Listing[] = []; // Listings array can contain null
   selectedListing: Listing | null = null; // Selected listing can be null
-  lessonCategories: LessonCategory[] = [];
-
-  showCreateListing: boolean = false;
-
-  newListing: Partial<Listing> = {
-    title: '',
-    image: '',
-    lessonsTaught: '',
-    locations: [],
-    aboutLesson: '',
-    aboutYou: '',
-    rates: {
-      hourly: '',
-      fiveHours: '',
-      tenHours: ''
-    },
-    socialPlatforms: []
-  };
-
+  
   constructor(
     private categoryService: CategoryService,
     private listingService: ListingService,
@@ -46,7 +27,6 @@ export class ListingsComponent {
 
   ngOnInit(): void {
     this.loadListings();
-    this.loadLessonCategories();
   }
 
   loadListings(): void {
@@ -62,64 +42,21 @@ export class ListingsComponent {
       },
     });
   }
-  loadLessonCategories(): void {
-    this.categoryService.getCategories().subscribe({
-      next: (data) => {
-        this.lessonCategories = data;
-      },
-      error: (err) => {
-        console.error('Failed to fetch lesson categories', err);
-      }
-    });
-  }
 
   selectListing(listing: Listing) {
     this.selectedListing = listing;
   }
 
 
-  openCreateListing(): void {
-    this.showCreateListing = true;
-  }
-  closeCreateListing(): void {
-    this.showCreateListing = false;
-    this.newListing = {
-      title: '',
-      image: '',
-      lessonsTaught: '',
-      locations: [],
-      aboutLesson: '',
-      aboutYou: '',
-      rates: {
-        hourly: '',
-        fiveHours: '',
-        tenHours: ''
-      },
-      socialPlatforms: []
-    };
+
+  isModalOpen = false;
+
+  openModal(): void {
+    this.isModalOpen = true;
   }
 
-  submitCreateListing(): void {
-    const processedListing: Listing = {
-      ...this.newListing,
-      lessonCategoryId: Number(this.newListing.lessonCategoryId),
-      locations: Array.isArray(this.newListing.locations)
-        ? this.newListing.locations
-        : (this.newListing.locations || '').split(',').map((loc) => loc.trim()),
-      socialPlatforms: Array.isArray(this.newListing.socialPlatforms)
-        ? this.newListing.socialPlatforms
-        : (this.newListing.socialPlatforms || '').split(',').map((platform) => platform.trim())
-    } as Listing;
-
-    this.listingService.createListing(processedListing).subscribe({
-      next: (newListing) => {
-        this.listings.push(newListing);
-        this.closeCreateListing();
-      },
-      error: (err) => {
-        console.error('Failed to create listing:', err);
-      }
-    });
+  closeModal(): void {
+    this.loadListings();
+    this.isModalOpen = false;
   }
-
 }

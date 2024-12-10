@@ -1,5 +1,6 @@
 public class ReviewDto
 {
+    public int RevieweeId { get; set; }
     public string Name { get; set; }
     public string Subject { get; set; }
     public string? Message { get; set; } // For pending reviews

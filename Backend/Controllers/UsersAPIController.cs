@@ -110,7 +110,6 @@ public class UsersAPIController : BaseController
     }
 
 
-
     [HttpGet("me")]
     public IActionResult Get()
     {
@@ -132,8 +131,8 @@ public class UsersAPIController : BaseController
                 SkypeId = u.SkypeId,
                 HangoutId = u.HangoutId,
                 ProfileVerified = new List<string>() { },
-                LessonsCompleted = 0,
-                Evaluations = 0,
+                LessonsCompleted = _dbContext.Lessons.Include(l => l.Listing).Count(l => l.Listing.UserId == userId && l.Status == LessonStatus.Completed),
+                Evaluations = _dbContext.Reviews.Count(r => r.RevieweeId == userId && (r.Type == ReviewType.Review || r.Type == ReviewType.Recommendation))
             })
             .FirstOrDefault();
 

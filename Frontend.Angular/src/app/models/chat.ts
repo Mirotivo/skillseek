@@ -1,8 +1,11 @@
 import { Message } from "./message";
 
-export interface Contact {
+
+export interface Chat {
     id: number;
+    listingId: number;
     studentId: number;
+    recipientId: number;
     name: string;
     lastMessage: string;
     timestamp: string;

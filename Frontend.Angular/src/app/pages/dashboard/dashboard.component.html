@@ -8,10 +8,15 @@
   </div>
 
   <!-- Profile Card -->
-  <div class="profile-section">
+  <div class="profile-section" *ngIf="user" >
     <div class="profile-card">
-      <img class="profile-image" [src]="user.profileImage" alt="Profile Photo" />
-      <h2>{{ user.name }}</h2>
+      <app-profile-image
+        [profileImage]="user.profileImage"
+        [firstName]="user.firstName"
+        [lastName]="user.lastName"
+      ></app-profile-image>
+
+      <h2>{{ user.firstName }} {{ user.lastName }}</h2>
       <p>{{ user.address }}</p>
       <div class="profile-status">
         <p><strong>Profile Verified:</strong> {{ user.profileVerified.join(', ') }}</p>
@@ -42,7 +47,7 @@
       <ul>
         <li *ngFor="let review of reviewsPending">
           <p><strong>{{ review.name }}</strong> - {{ review.message }}</p>
-          <button class="btn btn-warning">Leave a Review</button>
+          <button class="btn btn-warning" (click)="openModal(review.revieweeId)">Leave a Review</button>
         </li>
       </ul>
       <a href="/evaluations" class="view-all">See all pending reviews</a>
@@ -72,7 +77,7 @@
             <div>
               <h4>{{ listing.title }}</h4>
               <p>{{ listing.category }}</p>
-              <p>{{ listing.rate }}</p>
+              <p>{{ listing.rates.hourly }}</p>
               <button class="btn btn-secondary">Edit</button>
             </div>
           </div>
@@ -82,3 +87,6 @@
     </div>
   </div>
 </div>
+<app-modal *ngIf="isModalOpen" [isOpen]="isModalOpen" (onClose)="closeModal()">
+  <app-leave-review  [revieweeId]="selectedRevieweeId" (onClose)="closeModal()"></app-leave-review>
+</app-modal>
