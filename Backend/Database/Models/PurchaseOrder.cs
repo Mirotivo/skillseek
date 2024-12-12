@@ -15,6 +15,13 @@ public class PurchaseOrder
     public string Source { get; set; }
     public List<OrderItem> OrderItems { get; set; }
     [ForeignKey("StationGroupID")]
-    public StationGroup StationGroup { get; set; }
+    public StationGroup? StationGroup { get; set; }
     public string? Notes { get; set; }
+    public PurchaseOrder()
+    {
+        CustomerName = string.Empty;
+        Status = string.Empty;
+        Source = string.Empty;
+        OrderItems = new List<OrderItem>();
+    }
 }

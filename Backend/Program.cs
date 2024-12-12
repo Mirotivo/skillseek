@@ -39,6 +39,9 @@ builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 builder.Services.AddTransients(Assembly.GetExecutingAssembly());
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<PayPalPaymentGateway>();
+builder.Services.AddScoped<StripePaymentGateway>();
+builder.Services.AddScoped<PaymentGatewayFactory>();
 builder.Services
         .AddAuthentication(options =>
         {
@@ -92,6 +95,7 @@ builder.Services
         });
 
 // Configurations
+builder.Services.Configure<StripeOptions>(builder.Configuration.GetSection("Stripe"));
 builder.Services.Configure<PayPalOptions>(builder.Configuration.GetSection("PayPal"));
 
 builder.Services.AddHttpContextAccessor();

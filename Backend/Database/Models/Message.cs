@@ -11,20 +11,21 @@ public class Message
     public int ChatId { get; set; }
 
     [ForeignKey(nameof(Message.ChatId))]
-    public Chat Chat { get; set; }
+    public Chat? Chat { get; set; }
 
     [Required]
     public int SenderId { get; set; }
 
     [ForeignKey(nameof(Message.SenderId))]
-    public User Sender { get; set; }
+    public User? Sender { get; set; }
 
     public int? RecipientId { get; set; }
 
     [ForeignKey(nameof(Message.RecipientId))]
-    public User Recipient { get; set; }
+    public User? Recipient { get; set; }
 
     [Required]
+    [MaxLength(1000)]
     public string Content { get; set; }
 
     public DateTime SentAt { get; set; }
@@ -36,5 +37,10 @@ public class Message
         Content = string.Empty;
         SentAt = DateTime.UtcNow;
         IsRead = false;
+    }
+
+    public override string ToString()
+    {
+        return $"Message: {Id}, ChatId: {ChatId}, SenderId: {SenderId}, Content: {Content}, SentAt: {SentAt}, IsRead: {IsRead}";
     }
 }

@@ -1,13 +1,25 @@
 public class PaymentRequestDto
 {
+    public string Gateway { get; set; }
     public decimal Amount { get; set; }
     public string Currency { get; set; } = "AUD";
+    public string ReturnUrl { get; set; }
+    public string CancelUrl { get; set; }
+    public int? ListingId { get; set; }
 }
+
+public class CapturePaymentRequestDto
+{
+    public string Gateway { get; set; }
+    public string PaymentId { get; set; }
+}
+
 
 public class PaymentHistoryDto
 {
     public decimal WalletBalance { get; set; }
     public decimal TotalAmountCollected { get; set; }
+    public List<TransactionDto> Invoices { get; set; }
     public List<TransactionDto> Transactions { get; set; }
 }
 
@@ -29,3 +41,23 @@ public class TransactionDto
     public string Type { get; set; }
 }
 
+public class AddPayPalAccountDto
+{
+    public string PayPalEmail { get; set; }
+}
+
+public class SaveCardDto
+{
+    public string StripeToken { get; set; }
+    public string Purpose { get; set; }
+}
+
+public class CardDto
+{
+    public int Id { get; set; }
+    public string Last4 { get; set; }
+    public long ExpMonth { get; set; }
+    public long ExpYear { get; set; }
+    public string Type { get; set; }
+    public string Purpose { get; set; }
+}

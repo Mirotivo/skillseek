@@ -2,17 +2,17 @@
   <!-- Back Button -->
   <button class="back-button" (click)="goBack()">←</button>
 
-  <div *ngIf="loading" class="loading">Loading tutor details...</div>
-  <div *ngIf="!loading && tutor" class="payment-container">
+  <div *ngIf="loading" class="loading">Loading listing details...</div>
+  <div *ngIf="!loading && listing" class="payment-container">
 
-    <!-- Tutor Section -->
+    <!-- Listing Section -->
     <div class="tutor-section">
-      <img [src]="tutor.image" alt="{{ tutor.name }}" class="tutor-image" />
+      <img [src]="listing.image" alt="{{ listing.name }}" class="tutor-image" />
       <div class="tutor-info">
-        <h2>{{ tutor.name }}</h2>
-        <p>★★★★★ ({{ tutor.reviews }} reviews)</p>
+        <h2>{{ listing.name }}</h2>
+        <p>★★★★★ ({{ listing.reviews }} reviews)</p>
         <p class="contacted-info">
-          ❤️ {{ tutor.name }} is very coveted, he has already been contacted {{ tutor.contactedCount }} times this
+          ❤️ {{ listing.name }} is very coveted, he has already been contacted {{ listing.contactedCount }} times this
           month.
         </p>
       </div>

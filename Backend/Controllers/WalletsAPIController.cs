@@ -10,18 +10,17 @@ namespace skillseek.Controllers;
 [ApiController]
 public class WalletsAPIController : BaseController
 {
-
     private readonly skillseekDbContext _dbContext;
-    private readonly IPayPalPaymentService _payPalPaymentService;
+    private readonly PaymentGatewayFactory _paymentGatewayFactory;
 
-    public WalletsAPIController(skillseekDbContext dbContext, IPayPalPaymentService payPalPaymentService)
+    public WalletsAPIController(skillseekDbContext dbContext, PaymentGatewayFactory paymentGatewayFactory)
     {
         _dbContext = dbContext;
-        _payPalPaymentService = payPalPaymentService;
+        _paymentGatewayFactory = paymentGatewayFactory;
     }
 
     [HttpPost("add-money")]
-    public async Task<IActionResult> AddMoneyToWallet([FromBody] AddMoneyRequestDto request)
+    public async Task<IActionResult> AddMoneyToWallet([FromBody] PaymentRequestDto request)
     {
         var userId = GetUserId();
 
@@ -32,31 +31,86 @@ public class WalletsAPIController : BaseController
         if (wallet == null)
             return NotFound("Wallet not found.");
 
-        // Call PayPal API to create payment
-        var payPalResponse = await _payPalPaymentService.CreateOrder(request.Amount, "USD", "", "");
-        if (payPalResponse.StatusCode != System.Net.HttpStatusCode.Created)
-            return BadRequest("Payment creation failed.");
+        // Use PayPalPaymentGateway via IPaymentGateway
+        var paymentGateway = _paymentGatewayFactory.GetPaymentGateway("PayPal");
 
-        // Update wallet balance
-        wallet.Balance += request.Amount;
-        wallet.UpdatedAt = DateTime.UtcNow;
-
-        // Log the transaction
-        var transaction = new Transaction
+        try
         {
-            SenderId = userId,
-            RecipientId = null, // Platform
-            Amount = request.Amount,
-            PlatformFee = 0,
-            TransactionDate = DateTime.UtcNow,
-            Status = "Completed",
-            PaymentMethod = request.PaymentMethod
-        };
-        _dbContext.Transactions.Add(transaction);
+            // Create a payment
+            var paymentResult = await paymentGateway.CreatePayment(request.Amount, "AUD", request.ReturnUrl, request.CancelUrl);
 
-        await _dbContext.SaveChangesAsync();
+            if (string.IsNullOrEmpty(paymentResult.PaymentId) || string.IsNullOrEmpty(paymentResult.ApprovalUrl))
+                return BadRequest("Failed to create payment.");
 
-        return Ok(new { WalletBalance = wallet.Balance, TransactionId = transaction.Id });
+            // Log the transaction as Pending
+            var transaction = new Transaction
+            {
+                SenderId = userId,
+                RecipientId = null, // Platform
+                Amount = request.Amount,
+                PlatformFee = 0,
+                TransactionDate = DateTime.UtcNow,
+                PaymentType = PaymentType.WalletTopUp,
+                PaymentMethod = PaymentMethod.PayPal,
+                Status = TransactionStatus.Pending,
+                PaymentId = paymentResult.PaymentId
+            };
+            _dbContext.Transactions.Add(transaction);
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new
+            {
+                PaymentId = paymentResult.PaymentId,
+                ApprovalUrl = paymentResult.ApprovalUrl,
+                TransactionId = transaction.Id
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Message = "Failed to process payment.", Error = ex.Message });
+        }
+    }
+
+    [HttpPost("capture-payment")]
+    public async Task<IActionResult> CapturePaymentForWallet([FromBody] CapturePaymentRequestDto request)
+    {
+        var userId = GetUserId();
+
+        // Use PayPalPaymentGateway via IPaymentGateway
+        var paymentGateway = _paymentGatewayFactory.GetPaymentGateway("PayPal");
+
+        try
+        {
+            // Capture the payment
+            var success = await paymentGateway.CapturePayment(request.PaymentId);
+
+            if (!success)
+                return BadRequest("Failed to capture payment.");
+
+            // Find the transaction
+            var transaction = await _dbContext.Transactions.FirstOrDefaultAsync(t => t.PaymentId == request.PaymentId && t.SenderId == userId);
+            if (transaction == null)
+                return NotFound("Transaction not found.");
+
+            // Update the transaction status
+            transaction.Status = TransactionStatus.Completed;
+
+            // Update the wallet balance
+            var wallet = await _dbContext.Wallets.FirstOrDefaultAsync(w => w.UserId == userId);
+            if (wallet == null)
+                return NotFound("Wallet not found.");
+
+            wallet.Balance += transaction.Amount;
+            wallet.UpdatedAt = DateTime.UtcNow;
+
+            await _dbContext.SaveChangesAsync();
+
+            return Ok(new { WalletBalance = wallet.Balance, TransactionId = transaction.Id });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Message = "Failed to capture payment.", Error = ex.Message });
+        }
     }
 
     [HttpGet("balance")]

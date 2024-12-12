@@ -1,4 +1,5 @@
 export interface Review {
+    revieweeId: number;
     name: string;
     subject: string;
     message?: string; // For pending reviews

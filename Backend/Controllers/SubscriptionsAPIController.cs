@@ -33,8 +33,9 @@ public class SubscriptionsAPIController : BaseController
             Amount = request.Amount,
             PlatformFee = 0, // No additional fee for subscriptions
             TransactionDate = DateTime.UtcNow,
-            Status = "Pending",
-            PaymentMethod = request.PaymentMethod
+            PaymentType = PaymentType.StudentMembership,
+            PaymentMethod = PaymentMethod.Wallet,
+            Status = TransactionStatus.Pending,
         };
         _dbContext.Transactions.Add(transaction);
 
@@ -45,7 +46,7 @@ public class SubscriptionsAPIController : BaseController
             StartDate = DateTime.UtcNow,
             EndDate = DateTime.UtcNow.AddMonths(1), // 1-month subscription
             Amount = request.Amount,
-            Status = "Active"
+            Status = SubscriptionStatus.Active
         };
         _dbContext.Subscriptions.Add(subscription);
 

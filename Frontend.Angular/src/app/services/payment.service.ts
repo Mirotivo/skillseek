@@ -3,56 +3,77 @@ import { environment } from '../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PaymentHistory } from '../models/payment-history';
+import { Card } from '../models/card';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PaymentService {
   private apiUrl = `${environment.apiUrl}/payments`;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('User is not authenticated.');
+    }
+
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+  }
 
   getPaymentHistory(): Observable<PaymentHistory> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
+    return this.http.get<PaymentHistory>(`${this.apiUrl}/history`, {
+      headers: this.getAuthHeaders(),
     });
-
-    return this.http.get<PaymentHistory>(`${this.apiUrl}/history`, { headers });
   }
 
-  createPayment(amount: number, currency: string): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+  createPayment(gateway: string, listingId: number | null, amount: number): Observable<any> {
+    const returnUrl = `${environment.frontendUrl}/booking/${listingId}`;
+    const cancelUrl = `${environment.frontendUrl}/payment-cancel`;
+    const body = { gateway, amount, returnUrl, cancelUrl, listingId };
+
+    return this.http.post(`${this.apiUrl}/create-payment`, body, {
+      headers: this.getAuthHeaders(),
     });
-
-    const body = { amount, currency };
-
-    return this.http.post(`${this.apiUrl}/create-payment`, body, { headers });
   }
 
-  capturePayment(orderId: string): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
+  capturePayment(paymentId: string): Observable<any> {
+    const body = { gateway: "PayPal", paymentId };
+
+    return this.http.post(`${this.apiUrl}/capture-payment`, body, {
+      headers: this.getAuthHeaders(),
     });
-
-    const body = JSON.stringify(orderId);
-
-    return this.http.post(`${this.apiUrl}/capture-payment`, body, { headers });
   }
 
   addPayPalAccount(payPalEmail: string): Observable<any> {
-    const token = localStorage.getItem('token');
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+    const body = { payPalEmail };
+
+    return this.http.post(`${this.apiUrl}/add-paypal-account`, body, {
+      headers: this.getAuthHeaders(),
     });
-  
-    return this.http.post(`${this.apiUrl}/add-paypal-account`, { payPalEmail }, { headers });
   }
-  
+
+  getSavedCards(): Observable<Card[]> {
+    return this.http.get<Card[]>(`${this.apiUrl}/saved-cards`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+
+  saveCard(stripeToken: string, purpose: string): Observable<any> {
+    const body = { stripeToken, purpose };
+
+    return this.http.post(`${this.apiUrl}/save-card`, body, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+
+  removeCard(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/remove-card/${id}`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
 }

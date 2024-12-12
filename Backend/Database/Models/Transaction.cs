@@ -1,13 +1,51 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+public enum PaymentType
+{
+    StudentMembership,
+    TutorMembership,
+    Lesson,
+    WalletTopUp
+}
+public enum PaymentMethod
+{
+    PayPal,
+    Stripe,
+    Card,
+    Wallet
+}
+public enum TransactionStatus
+{
+    Pending,
+    Completed,
+    Failed
+}
+
+
 public class Transaction
 {
+    [Key]
     public int Id { get; set; }
-    public int SenderId { get; set; } // Customer/User paying
-    public User Sender { get; set; }
+    public int SenderId { get; set; }
+    [ForeignKey(nameof(Transaction.SenderId))]
+    public User? Sender { get; set; }
     public int? RecipientId { get; set; } // Nullable if paying the platform
+    [ForeignKey(nameof(Transaction.RecipientId))]
     public User? Recipient { get; set; }
     public decimal Amount { get; set; }
-    public decimal PlatformFee { get; set; } // Deducted fee
+    public decimal PlatformFee { get; set; }
+    public string? PaymentId { get; set; }
     public DateTime TransactionDate { get; set; }
-    public string Status { get; set; } // e.g., "Pending", "Completed"
-    public string PaymentMethod { get; set; } // e.g., "PayPal", "Card"
+    public PaymentType PaymentType { get; set; }
+    public PaymentMethod PaymentMethod { get; set; }
+    public TransactionStatus Status { get; set; }
+    public Transaction()
+    {
+
+    }
+    public override string ToString()
+    {
+        return $"Transaction: {Id}, SenderId: {SenderId}, RecipientId: {RecipientId}, Amount: {Amount:C}, Status: {Status}, PaymentMethod: {PaymentMethod}, Date: {TransactionDate}";
+    }
 }

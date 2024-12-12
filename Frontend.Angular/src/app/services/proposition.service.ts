@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { LessonProposition } from '../models/lesson-proposotion';
 import { environment } from '../environments/environment';
+import { Proposition } from '../models/proposition';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +12,7 @@ export class PropositionService {
 
   constructor(private http: HttpClient) {}
 
-  proposeLesson(lesson: LessonProposition): Observable<any> {
+  proposeLesson(lesson: Proposition): Observable<any> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
@@ -25,6 +25,15 @@ export class PropositionService {
     };
 
     return this.http.post(`${this.apiUrl}/proposeLesson`, formattedLesson, { headers });
+  }
+
+  respondToProposition(propositionId: number, accept: boolean) {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.post(`${this.apiUrl}/respondToProposition/${propositionId}`, accept, { headers });
   }
 
   private formatDuration(hours: number): string {

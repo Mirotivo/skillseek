@@ -2,7 +2,9 @@ using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using skillseek.Models;
+using Stripe;
 
 namespace skillseek.Controllers;
 
@@ -11,10 +13,14 @@ namespace skillseek.Controllers;
 public class LessonsAPIController : BaseController
 {
     private readonly skillseekDbContext _dbContext;
+    private readonly PaymentGatewayFactory _paymentGatewayFactory;
+    private readonly ILogger<LessonsAPIController> _logger;
 
-    public LessonsAPIController(skillseekDbContext dbContext)
+    public LessonsAPIController(skillseekDbContext dbContext, PaymentGatewayFactory paymentGatewayFactory, ILogger<LessonsAPIController> logger)
     {
         _dbContext = dbContext;
+        _paymentGatewayFactory = paymentGatewayFactory;
+        _logger = logger;
     }
 
     [HttpPost("proposeLesson")]
@@ -22,14 +28,20 @@ public class LessonsAPIController : BaseController
     {
         var userId = GetUserId();
 
+        if (lessonDto.StudentId == null || lessonDto.StudentId == 0)
+        {
+            // If StudentId is not provided in lessonDto, Initiated by student
+            lessonDto.StudentId = userId;
+        }
+
         var lesson = new Lesson
         {
             Date = lessonDto.Date,
             Duration = lessonDto.Duration,
             Price = lessonDto.Price,
-            StudentId = userId,
-            TutorId = lessonDto.TutorId,
-            IsStudentInitiator = true,
+            StudentId = lessonDto.StudentId.Value,
+            ListingId = lessonDto.ListingId,
+            IsStudentInitiated = lessonDto.StudentId == userId,
             Status = LessonStatus.Proposed
         };
 
@@ -39,18 +51,70 @@ public class LessonsAPIController : BaseController
         return Ok(new { Message = "Lesson proposed successfully.", LessonId = lesson.Id });
     }
 
-    [HttpGet("{contactId}")]
-    public IActionResult GetPropositions(int contactId)
+    [HttpPost("respondToProposition/{lessonId}")]
+    public IActionResult RespondToProposition(int lessonId, [FromBody] bool accept)
     {
+        var userId = GetUserId();
+
+        // Fetch the proposition
+        var lesson = _dbContext.Lessons
+            .Include(l => l.Listing)
+            .FirstOrDefault(l => l.Id == lessonId);
+
+        if (lesson == null)
+        {
+            return NotFound(new { Message = "Lesson not found." });
+        }
+
+        // Update the status based on the response
+        lesson.Status = accept ? LessonStatus.Booked : LessonStatus.Canceled;
+
+        // Save changes
+        _dbContext.SaveChanges();
+
+        return Ok(new
+        {
+            Message = accept ? "Proposition accepted successfully." : "Proposition refused successfully.",
+            LessonId = lesson.Id,
+            Status = lesson.Status.ToString()
+        });
+    }
+
+    [HttpGet("{contactId}")]
+    public IActionResult GetLessons(int contactId)
+    {
+        var userId = GetUserId();
+
+        // Update the status of past Booked lessons to Completed
+        var currentDate = DateTime.UtcNow;
+        var pastBookedLessons = _dbContext.Lessons
+            .Include(l => l.Listing)
+            .Include(l => l.Listing.User)
+            .Include(l => l.Student)
+            .Where(l => l.Status == LessonStatus.Booked && l.Date < currentDate)
+            .ToList();
+        foreach (var lesson in pastBookedLessons)
+        {
+            lesson.Status = LessonStatus.Completed;
+            // Process payment for completed lessons
+            ProcessPayment(lesson);
+        }
+        if (pastBookedLessons.Any())
+        {
+            _dbContext.SaveChanges();
+        }
+
         // Fetch Propositions
         var propositions = _dbContext.Lessons
             .Where(p => p.Status == LessonStatus.Proposed)
+            .Where(p => p.IsStudentInitiated && userId == p.Listing.UserId)
             .Where(p => p.StudentId == contactId)
-            .Select(p => new PropositionDto
+            .OrderByDescending(p => p.Date)
+            .Select(p => new LessonDto
             {
                 Id = p.Id,
                 Date = p.Date,
-                Duration = p.Duration.ToString(@"hh\:mm"),
+                Duration = p.Duration,
                 Price = p.Price,
                 Status = p.Status.ToString()
             })
@@ -60,6 +124,7 @@ public class LessonsAPIController : BaseController
         var lessons = _dbContext.Lessons
             .Where(p => p.Status == LessonStatus.Booked || p.Status == LessonStatus.Completed || p.Status == LessonStatus.Canceled)
             .Where(l => l.StudentId == contactId)
+            .OrderByDescending(p => p.Date)
             .Select(l => new LessonDto
             {
                 Id = l.Id,
@@ -75,6 +140,68 @@ public class LessonsAPIController : BaseController
             Propositions = propositions,
             Lessons = lessons
         });
+    }
+
+    private void ProcessPayment(Lesson lesson)
+    {
+        // Calculate the platform fee (e.g., 10% of the lesson price)
+        var platformFeeRate = 0.1m;
+        var platformFee = lesson.Price * platformFeeRate;
+        var amountToTutor = lesson.Price - platformFee;
+
+        // Create a new transaction
+        var transaction = new Transaction
+        {
+            SenderId = lesson.StudentId,
+            Sender = lesson.Student,
+            RecipientId = lesson.Listing.UserId,
+            Recipient = lesson.Listing.User,
+            Amount = amountToTutor,
+            PlatformFee = platformFee,
+            TransactionDate = DateTime.UtcNow,
+            PaymentType = PaymentType.Lesson,
+            PaymentMethod = PaymentMethod.Card,
+            Status = TransactionStatus.Pending,
+        };
+
+        _dbContext.Transactions.Add(transaction);
+
+        // Process payment (e.g., integrate with payment gateway)
+        // Resolve the appropriate payment gateway
+        var paymentGateway = _paymentGatewayFactory.GetPaymentGateway("Stripe");
+        var paymentSuccessful = paymentGateway.ProcessPayment(transaction).Result;
+
+        transaction.Status = paymentSuccessful ? TransactionStatus.Completed : TransactionStatus.Failed;
+
+        if (paymentSuccessful)
+        {
+            UpdateWalletBalance(transaction.RecipientId.Value, amountToTutor);
+        }
+
+        _dbContext.SaveChanges();
+    }
+
+    private void UpdateWalletBalance(int userId, decimal amount)
+    {
+        var wallet = _dbContext.Wallets.FirstOrDefault(w => w.UserId == userId);
+        if (wallet != null)
+        {
+            // Update existing wallet balance
+            wallet.Balance += amount;
+            wallet.UpdatedAt = DateTime.UtcNow;
+            _dbContext.Wallets.Update(wallet);
+        }
+        else
+        {
+            // Create a new wallet if none exists
+            wallet = new Wallet
+            {
+                UserId = userId,
+                Balance = amount,
+                UpdatedAt = DateTime.UtcNow
+            };
+            _dbContext.Wallets.Add(wallet);
+        }
     }
 }
 

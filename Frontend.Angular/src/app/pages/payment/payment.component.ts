@@ -6,6 +6,8 @@ import { ListingService } from '../../services/listing.service';
 import { Listing } from '../../models/listing';
 import { PaypalService } from '../../services/paypal.service';
 import { PaymentService } from '../../services/payment.service';
+import { loadStripe } from '@stripe/stripe-js';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-payment',
@@ -14,9 +16,10 @@ import { PaymentService } from '../../services/payment.service';
   styleUrls: ['./payment.component.scss']
 })
 export class PaymentComponent implements OnInit {
-  tutor: Listing | null = null; // Store tutor details
-  tutorId: string | null = null; // Store the tutor Id from the route
+  listing: Listing | null = null; // Store tutor details
+  listingId!: number;
   loading = true; // Loading state for fetching tutor details
+  stripePromise = loadStripe(environment.stripePublishableKey);
 
   subscription = {
     title: 'Student Pass',
@@ -36,16 +39,16 @@ export class PaymentComponent implements OnInit {
     private listingService: ListingService,
     private paypalService: PaypalService,
     private paymentService: PaymentService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Get the tutor Id from the route parameters
     this.route.paramMap.subscribe((params) => {
-      this.tutorId = params.get('id');
-      if (this.tutorId) {
-        this.fetchTutorDetails(this.tutorId);
+      this.listingId = Number(params.get('id'));
+      if (!isNaN(this.listingId)) {
+        this.loadListing(this.listingId);
       } else {
-        console.error('Tutor Id is missing');
+        console.error('Listing Id is missing');
         this.loading = false;
       }
     });
@@ -54,18 +57,14 @@ export class PaymentComponent implements OnInit {
     });
   }
 
-  fetchTutorDetails(id: string): void {
-    this.listingService.getRandomListings().subscribe({
-      next: (listings) => {
-        this.tutor = listings.find((listing) => listing.id.toString() === id) || null;
-        if (!this.tutor) {
-          console.error('Tutor details not found for Id:', id);
-        }
+  loadListing(listingId: number): void {
+    this.listingService.getListing(listingId).subscribe({
+      next: (listing) => {
+        this.listing = listing;
         this.loading = false;
       },
       error: (err) => {
-        console.error('Failed to fetch tutor details:', err);
-        this.loading = false;
+        console.error('Failed to fetch listing:', err);
       },
     });
   }
@@ -74,24 +73,61 @@ export class PaymentComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  onPaymentMethodChange(method: 'card' | 'paypal'): void {
+  async onPaymentMethodChange(method: 'card' | 'paypal'): Promise<void> {
     this.paymentMethod = method;
+    if (method === 'card') {
+      await this.handleStripePayment();
+    }
+  }
+ 
+  async handleStripePayment(): Promise<void> {
+    const stripe = await this.stripePromise;
+    if (!stripe) {
+      console.error('Stripe could not be initialized');
+      return;
+    }
+
+    try {
+      // Call backend to create a Stripe Checkout Session
+      this.paymentService.createPayment("Stripe", this.listingId, this.subscription.price).subscribe({
+        next: (session: { id: string, approvalUrl: string }) => {
+          if (session.approvalUrl) {
+            // Redirect to the Stripe Checkout Session URL
+            window.location.href = session.approvalUrl;
+          } else {
+            console.error('Failed to retrieve Stripe session URL');
+          }
+        },
+        error: (error) => {
+          console.error('Error creating Stripe session:', error);
+        },
+      });
+    } catch (error) {
+      console.error('Error initiating Stripe payment:', error);
+    }
   }
 
   renderPayPalButton(): void {
     const paypal = (window as any).paypal;
-  
+
     if (paypal && paypal.Buttons) {
       paypal.Buttons({
         createOrder: (data: any, actions: any) => {
-          return this.paymentService.createPayment(69.00, 'USD').toPromise().then((order) => {
-            if (!order || !order.orderID) {
-              throw new Error('Order Id not returned from the server.');
-            }
-            return order.orderID;
-          }).catch((error) => {
-            console.error('Error creating order:', error);
-            throw error;
+          return new Promise<string>((resolve, reject) => {
+            this.paymentService.createPayment("PayPal", this.listingId, 69.00).subscribe({
+              next: (order) => {
+                if (!order || !order.paymentId) {
+                  console.error('Payment Id not returned from the server.');
+                  reject('Payment Id not returned from the server.');
+                  return;
+                }
+                resolve(order.paymentId);
+              },
+              error: (error) => {
+                console.error('Error creating order:', error);
+                reject(error);
+              },
+            });
           });
         },
         onApprove: (data: any, actions: any) => {
@@ -100,12 +136,14 @@ export class PaymentComponent implements OnInit {
             console.error('Order Id is missing in onApprove.');
             return;
           }
-  
-          this.paymentService.capturePayment(orderID).toPromise().then(() => {
-            console.log('Payment successfully captured.');
-            this.onPay();
-          }).catch((error) => {
-            console.error('Error capturing payment:', error);
+          this.paymentService.capturePayment(orderID).subscribe({
+            next: () => {
+              console.log('Payment successfully captured.');
+              this.onPay();
+            },
+            error: (error) => {
+              console.error('Error capturing payment:', error);
+            },
           });
         },
         onError: (err: any) => {
@@ -116,15 +154,14 @@ export class PaymentComponent implements OnInit {
       console.error('PayPal SDK not loaded.');
     }
   }
-      
 
   onPay(): void {
-    if (this.tutorId) {
-      // Navigate to the booking route with the tutor Id
-      this.router.navigate(['/booking', this.tutorId]);
+    if (this.listingId) {
+      // Navigate to the booking route with the listing Id
+      this.router.navigate(['/booking', this.listingId]);
       console.log(`Payment initiated via ${this.paymentMethod}`);
     } else {
-      console.error('Tutor Id is missing');
+      console.error('Listing Id is missing');
     }
   }
 }

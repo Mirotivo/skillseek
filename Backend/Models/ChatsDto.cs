@@ -1,7 +1,10 @@
 public class ChatDto
 {
     public int Id { get; set; }
+    public int ListingId { get; set; }
+    public int TutorId { get; set; }
     public int StudentId { get; set; }
+    public int RecipientId { get; set; }
     public string Name { get; set; }
     public string LastMessage { get; set; }
     public string Timestamp { get; set; }
@@ -17,8 +20,9 @@ public class MessageDto
     public string Timestamp { get; set; }
 }
 
-public class SentMessageDto
+public class SendMessageDto
 {
+    public int ListingId { get; set; } // The ID of the message recipient
     public int RecipientId { get; set; } // The ID of the message recipient
     public string Content { get; set; } // The message text
 }

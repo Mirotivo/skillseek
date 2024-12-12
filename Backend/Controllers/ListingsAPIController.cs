@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Security.Claims;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using skillseek.Models;
@@ -22,6 +23,7 @@ public class ListingsAPIController : BaseController
     {
         // Fetch all listings from the database
         var listings = _dbContext.Listings
+            .Include(l => l.Rates)
             .Include(l => l.LessonCategory)
             .Include(l => l.User)
             .AsEnumerable()
@@ -47,12 +49,12 @@ public class ListingsAPIController : BaseController
                                 .ToList(),
                 AboutLesson = l.AboutLesson,
                 AboutYou = l.AboutYou,
-                Rate = $"{l.HourRate}/h",
+                Rate = $"{l.Rates.Hourly}/h",
                 Rates = new RatesDto
                 {
-                    Hourly = $"{l.HourRate}/h",
-                    FiveHours = $"{l.HourRate * 5}/h",
-                    TenHours = $"{l.HourRate * 10}/h"
+                    Hourly = l.Rates.Hourly,
+                    FiveHours = l.Rates.FiveHours,
+                    TenHours = l.Rates.TenHours
                 },
                 SocialPlatforms = new List<string> { "Messenger", "Linkedin", "Facebook", "Email" }
             })
@@ -66,6 +68,64 @@ public class ListingsAPIController : BaseController
         return Ok(result);
     }
 
+    [HttpGet("search")]
+    public IActionResult Search([FromQuery] string query, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return BadRequest("Search query cannot be empty.");
+        }
+
+        if (page < 1 || pageSize < 1)
+        {
+            return BadRequest("Page and page size must be greater than 0.");
+        }
+
+        var queryable = _dbContext.Listings
+            .Include(l => l.Rates)
+            .Include(l => l.LessonCategory)
+            .Include(l => l.User)
+            .Where(l => EF.Functions.Like(l.Title, $"%{query}%") ||
+                EF.Functions.Like(l.Description, $"%{query}%") ||
+                EF.Functions.Like(l.AboutLesson, $"%{query}%") ||
+                EF.Functions.Like(l.AboutYou, $"%{query}%")
+            );
+
+        var totalResults = queryable.Count();
+
+        var results = queryable
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(l => new ListingDto
+            {
+                Id = l.Id,
+                TutorId = l.User.Id,
+                Name = l.User.FirstName,
+                Category = l.LessonCategory.Name,
+                Title = l.Title,
+                Image = l.Image,
+                AboutLesson = l.AboutLesson,
+                AboutYou = l.AboutYou,
+                Rate = $"{l.Rates.Hourly}/h",
+                Rates = new RatesDto
+                {
+                    Hourly = l.Rates.Hourly,
+                    FiveHours = l.Rates.FiveHours,
+                    TenHours = l.Rates.TenHours
+                }
+            })
+            .ToList();
+
+        return Ok(new
+        {
+            TotalResults = totalResults,
+            Page = page,
+            PageSize = pageSize,
+            Results = results
+        });
+    }
+
+
     [HttpGet()]
     public IActionResult Get()
     {
@@ -73,6 +133,7 @@ public class ListingsAPIController : BaseController
 
         // Fetch the data that can be directly translated to SQL
         var listings = _dbContext.Listings
+            .Include(l => l.Rates)
             .Include(l => l.LessonCategory)
             .Include(l => l.User)
             .Where(l => l.UserId == userId)
@@ -94,65 +155,42 @@ public class ListingsAPIController : BaseController
                                 .ToList(),
                 AboutLesson = l.AboutLesson,
                 AboutYou = l.AboutYou,
-                Rate = $"{l.HourRate}/h",
+                Rate = $"{l.Rates.Hourly}/h",
                 Rates = new RatesDto
                 {
-                    Hourly = $"{l.HourRate}/h",
-                    FiveHours = $"{l.HourRate * 5}/h",
-                    TenHours = $"{l.HourRate * 10}/h"
+                    Hourly = l.Rates.Hourly,
+                    FiveHours = l.Rates.FiveHours,
+                    TenHours = l.Rates.TenHours
                 },
                 SocialPlatforms = new List<string> { "Messenger", "Linkedin", "Facebook", "Email" }
             })
             .ToList();
-
-        if (result == null || !result.Any())
-        {
-            return NotFound("No listings found for this user.");
-        }
-
         return Ok(result);
     }
 
-    [HttpPost("create-listing")]
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateListingDto createListingDto)
+
+    [HttpGet("{id:int}")]
+    public IActionResult GetListingById(int id)
     {
-        if (createListingDto == null)
+        var listing = _dbContext.Listings
+            .Include(l => l.Rates)
+            .Include(l => l.LessonCategory)
+            .Include(l => l.User)
+            .FirstOrDefault(l => l.Id == id);
+
+        if (listing == null)
         {
-            return BadRequest("Invalid data.");
+            return NotFound($"Listing with ID {id} not found.");
         }
 
-        var userId = GetUserId();
-
-        // Validate and map the DTO to a Listing entity
-        var listing = new Listing
-        {
-            Title = createListingDto.Title,
-            AboutLesson = createListingDto.AboutLesson,
-            AboutYou = createListingDto.AboutYou,
-            Image = createListingDto.Image,
-            Locations = createListingDto.Locations
-                        .Aggregate(LocationType.None, (current, location) =>
-                            current | Enum.Parse<LocationType>(location, true)),
-            LessonCategoryId = createListingDto.LessonCategoryId,
-            UserId = userId,
-            HourRate = createListingDto.HourRate
-        };
-
-        // Save to the database
-        await _dbContext.Listings.AddAsync(listing);
-        await _dbContext.SaveChangesAsync();
-
-        // Map the saved entity to a DTO for the response
         var result = new ListingDto
         {
             Id = listing.Id,
-            TutorId = userId,
-            Name = listing.User?.FirstName, // Assuming `User` is eager-loaded
-            Category = listing.LessonCategory?.Name, // Assuming `LessonCategory` is eager-loaded
+            Name = listing.User.FirstName,
+            Category = listing.LessonCategory.Name,
             Title = listing.Title,
             Image = listing.Image,
-            LessonsTaught = listing.LessonCategory?.Name,
+            LessonsTaught = listing.LessonCategory.Name,
             Locations = Enum.GetValues(typeof(LocationType))
                             .Cast<LocationType>()
                             .Where(location => (listing.Locations & location) == location && location != LocationType.None)
@@ -160,18 +198,125 @@ public class ListingsAPIController : BaseController
                             .ToList(),
             AboutLesson = listing.AboutLesson,
             AboutYou = listing.AboutYou,
-            Rate = $"{listing.HourRate}/h",
+            Rate = $"{listing.Rates.Hourly}/h",
             Rates = new RatesDto
             {
-                Hourly = $"{listing.HourRate}/h",
-                FiveHours = $"{listing.HourRate * 5}/h",
-                TenHours = $"{listing.HourRate * 10}/h"
+                Hourly = listing.Rates.Hourly,
+                FiveHours = listing.Rates.FiveHours,
+                TenHours = listing.Rates.TenHours
             },
             SocialPlatforms = new List<string> { "Messenger", "Linkedin", "Facebook", "Email" }
         };
 
-        return CreatedAtAction(nameof(Get), new { id = listing.Id }, result);
+        return Ok(result);
     }
 
+
+    [HttpPost("create-listing")]
+    public async Task<IActionResult> Create([FromForm] CreateListingWithImageDto createListingDto)
+    {
+        if (createListingDto == null)
+        {
+            return BadRequest("Invalid data.");
+        }
+
+        var userId = GetUserId();
+        var filePath = string.Empty;
+
+        // Begin a transaction
+        using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+        try
+        {
+            string? imageUrl = null;
+
+            // Step 1: Upload the image (if provided)
+            if (createListingDto.Image != null)
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(createListingDto.Image.FileName)}";
+                filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await createListingDto.Image.CopyToAsync(stream);
+                }
+
+                imageUrl = $"https://localhost:9000/uploads/{uniqueFileName}";
+            }
+
+            // Step 2: Create the listing
+            var listing = new Listing
+            {
+                Title = createListingDto.Title,
+                AboutLesson = createListingDto.AboutLesson,
+                AboutYou = createListingDto.AboutYou,
+                Image = imageUrl,
+                Locations = createListingDto.Locations
+                            .Aggregate(LocationType.None, (current, location) =>
+                                current | Enum.Parse<LocationType>(location, true)),
+                LessonCategoryId = createListingDto.LessonCategoryId,
+                UserId = userId,
+                Rates = new ListingRates
+                {
+                    Hourly = createListingDto.Rates.Hourly,
+                    FiveHours = createListingDto.Rates.FiveHours,
+                    TenHours = createListingDto.Rates.TenHours
+                }
+            };
+
+            // Save to the database
+            await _dbContext.Listings.AddAsync(listing);
+            await _dbContext.SaveChangesAsync();
+
+            // Commit the transaction
+            await transaction.CommitAsync();
+
+            // Return the created listing DTO
+            return CreatedAtAction(nameof(GetListingById), new { id = listing.Id }, new ListingDto
+            {
+                Id = listing.Id,
+                TutorId = userId,
+                Name = listing.User?.FirstName,
+                Category = listing.LessonCategory?.Name,
+                Title = listing.Title,
+                Image = listing.Image,
+                LessonsTaught = listing.LessonCategory?.Name,
+                Locations = Enum.GetValues(typeof(LocationType))
+                                .Cast<LocationType>()
+                                .Where(location => (listing.Locations & location) == location && location != LocationType.None)
+                                .Select(location => location.ToString())
+                                .ToList(),
+                AboutLesson = listing.AboutLesson,
+                AboutYou = listing.AboutYou,
+                Rate = $"{listing.Rates.Hourly}/h",
+                Rates = new RatesDto
+                {
+                    Hourly = listing.Rates.Hourly,
+                    FiveHours = listing.Rates.FiveHours,
+                    TenHours = listing.Rates.TenHours
+                },
+                SocialPlatforms = new List<string> { "Messenger", "Linkedin", "Facebook", "Email" }
+            });
+        }
+        catch (Exception ex)
+        {
+            // Rollback the transaction
+            await transaction.RollbackAsync();
+
+            // Delete the uploaded image if something fails
+            if (!string.IsNullOrEmpty(filePath) && System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the listing.");
+        }
+    }
 }
 

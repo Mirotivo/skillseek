@@ -1,17 +1,17 @@
 <app-header></app-header>
 <app-navigation-bar></app-navigation-bar>
-  <!-- Tab Navigation -->
-  <div class="tabs">
-    <button class="tab" [class.active]="activeTab === 'profile'" (click)="activeTab = 'profile'">
-      My Profile
-    </button>
-    <button class="tab" [class.active]="activeTab === 'invoices'" (click)="activeTab = 'invoices'">
-      My Invoices
-    </button>
-    <button class="tab" [class.active]="activeTab === 'payments'" (click)="activeTab = 'payments'">
-      My Payments
-    </button>
-  </div>
+<!-- Tab Navigation -->
+<div class="tabs">
+  <button class="tab" [class.active]="activeTab === 'profile'" (click)="activeTab = 'profile'">
+    My Profile
+  </button>
+  <button class="tab" [class.active]="activeTab === 'invoices'" (click)="activeTab = 'invoices'">
+    My Invoices
+  </button>
+  <button class="tab" [class.active]="activeTab === 'payments'" (click)="activeTab = 'payments'">
+    My Payments
+  </button>
+</div>
 
 <div class="profile-page" *ngIf="profile">
   <div *ngIf="activeTab === 'profile'">
@@ -126,29 +126,17 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>#4221941</td>
-          <td>Mon 29 May</td>
-          <td>Student Pass</td>
-          <td class="price">-69 AUD</td>
-          <td><button class="download-btn">💾</button></td>
-        </tr>
-        <tr>
-          <td>#1750556</td>
-          <td>Sat 22 May</td>
-          <td>Premium from the May 22 2021 to the June 21 2021</td>
-          <td class="price">-29 AUD</td>
-          <td><button class="download-btn">💾</button></td>
-        </tr>
-        <tr>
-          <td>#1654681</td>
-          <td>Thu 15 Apr</td>
-          <td>Premium from the April 15 2021 to the May 15 2021</td>
-          <td class="price">-29 AUD</td>
-          <td><button class="download-btn">💾</button></td>
+        <tr *ngFor="let transaction of payment?.invoices">
+          <td>#{{ transaction.id }}</td>
+          <td>{{ transaction.date }}</td>
+          <td>{{ transaction.description }}</td>
+          <td class="price">{{ transaction.amount }} AUD</td>
+          <td>
+            <button class="download-btn">💾</button>
+          </td>
         </tr>
       </tbody>
-    </table>  
+    </table>
   </div>
 
   <div *ngIf="activeTab === 'payments'">
@@ -208,97 +196,27 @@
     <div class="payment-methods" *ngIf="activeSubTab === 'method'">
       <h2>Method of Payment</h2>
       <p>In order to pay your tutors, you must register a means of payment.</p>
-    
-      <h3>Default payment method</h3>
-      <div class="method-list">
-        <div class="payment-method">
-          <div class="method-details">
-            <img src="assets/paypal-logo.png" alt="PayPal Logo" class="method-icon" />
-            <div>
-              <p class="method-name">PayPal account</p>
-              <p class="method-info">A*****atlive.com</p>
-            </div>
-          </div>
-          <div class="method-actions">
-            <button class="favorite active">❤️</button>
-            <button class="delete">🗑️</button>
-          </div>
-        </div>
-    
-        <div class="payment-method">
-          <div class="method-details">
-            <img src="assets/visa-logo.png" alt="Visa Logo" class="method-icon" />
-            <div>
-              <p class="method-name">Card --- 4305</p>
-              <span class="method-type">visa</span>
-            </div>
-          </div>
-          <div class="method-actions">
-            <button class="favorite">❤️</button>
-            <button class="delete">🗑️</button>
-          </div>
-        </div>
-    
-        <div class="payment-method">
-          <div class="method-details">
-            <img src="assets/paypal-logo.png" alt="PayPal Logo" class="method-icon" />
-            <div>
-              <p class="method-name">PayPal account</p>
-              <p class="method-info">A*****atlive.com</p>
-            </div>
-          </div>
-          <div class="method-actions">
-            <button class="favorite">❤️</button>
-            <button class="delete">🗑️</button>
-          </div>
-        </div>
-      </div>
-    
-      <button class="add-method-btn">Add a payment method</button>
+      <app-manage-cards [cardPurpose]="'Paying'"></app-manage-cards>
     </div>
-    
+
     <div class="payment-container" *ngIf="activeSubTab === 'receiving'">
       <!-- Payment Method Section -->
-      <div class="payment-method-section">
-        <h3>Payment method</h3>
-        <div class="payment-method-card">
-          <div class="method-details">
-            <img src="assets/paypal-logo.png" alt="PayPal Logo" class="method-icon" />
-            <p class="method-name">PayPal account</p>
-          </div>
-          <div class="method-status">
-            <span class="status-icon">✅</span>
-          </div>
-        </div>
-        <button class="replace-method-btn">Replace this payment method</button>
-        <div class="paypal-button-container" id="paypal-button-container"></div>
+      <app-manage-cards [cardPurpose]="'Receiving'"></app-manage-cards>
 
-      </div>
-    
       <!-- Payment Preference Section -->
       <div class="payment-preference-section">
         <h3>I wish to be paid:</h3>
         <div class="preference-option">
-          <input
-            type="radio"
-            id="endOfMonth"
-            name="paymentPreference"
-            value="endOfMonth"
-            [(ngModel)]="paymentPreference"
-          />
+          <input type="radio" id="endOfMonth" name="paymentPreference" value="endOfMonth"
+            [(ngModel)]="paymentPreference" />
           <label for="endOfMonth">
             <span class="preference-title">At the end of the month</span>
             <span class="preference-subtitle">(as soon as my balance is more than $30)</span>
           </label>
         </div>
         <div class="preference-option selected">
-          <input
-            type="radio"
-            id="afterEachLesson"
-            name="paymentPreference"
-            value="afterEachLesson"
-            [(ngModel)]="paymentPreference"
-          />
+          <input type="radio" id="afterEachLesson" name="paymentPreference" value="afterEachLesson"
+            [(ngModel)]="paymentPreference" />
           <label for="afterEachLesson">
             <span class="preference-title">After each lesson</span>
             <span class="preference-subtitle">(as soon as my balance is more than $30)</span>
@@ -306,21 +224,21 @@
         </div>
       </div>
     </div>
-    
+
     <div class="compensation-container" *ngIf="activeSubTab === 'policy'">
       <h3>Choose your level of compensation in case of student cancellation</h3>
       <p>
         Superprof authorises the student to cancel a lesson at least 24 hours in advance. In this case, it is
         fully refunded. Within 24 hours before the lesson, you can decide on your level of compensation.
       </p>
-    
+
       <div class="compensation-selector">
         <button class="adjust-btn" (click)="adjustCompensation(-10)">-</button>
         <span class="compensation-value">{{ compensationPercentage }}%</span>
         <button class="adjust-btn" (click)="adjustCompensation(10)">+</button>
       </div>
-    
+
       <button class="compensate-btn">Get compensated {{ compensationPercentage }}%</button>
-    </div>    
+    </div>
   </div>
 </div>

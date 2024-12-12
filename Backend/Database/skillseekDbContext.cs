@@ -24,11 +24,10 @@ public class skillseekDbContext : DbContext
     public DbSet<Chat> Chats { get; set; }
     public DbSet<Message> Messages { get; set; }
 
-
+    public DbSet<Subscription> Subscriptions { get; internal set; }
+    public DbSet<UserCard> UserCards { get; set; }
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<Wallet> Wallets { get; set; }
-    public DbSet<Payout> Payouts { get; set; }
-    public DbSet<Subscription> Subscriptions { get; internal set; }
 
     public skillseekDbContext(DbContextOptions<skillseekDbContext> options, IConfiguration config)
         : base(options)
@@ -118,11 +117,22 @@ public class skillseekDbContext : DbContext
             .WithOne()
             .HasForeignKey<Wallet>(w => w.UserId);
 
-        modelBuilder.Entity<Payout>()
-            .HasOne(p => p.User)
-            .WithMany()
-            .HasForeignKey(p => p.UserId);
+        // Configure relationships
+        modelBuilder.Entity<UserCard>()
+            .HasOne(uc => uc.User)
+            .WithMany(u => u.UserCards)
+            .HasForeignKey(uc => uc.UserId)
+            .OnDelete(DeleteBehavior.Cascade); // Cascade delete when a user is deleted
 
+        // Configure ListingRates entity
+        modelBuilder.Entity<ListingRates>(entity =>
+        {
+            entity.HasKey(r => r.Id);
+            entity.HasOne(r => r.Listing)
+                .WithOne(l => l.Rates)
+                .HasForeignKey<ListingRates>(r => r.ListingId)
+                .OnDelete(DeleteBehavior.Cascade); // Cascade delete for Rates
+        });
     }
 
 
@@ -164,7 +174,7 @@ public class skillseekDbContext : DbContext
             }
         }
 
-        
+
         // Handle entities implementing ICreatable
         foreach (var entry in ChangeTracker.Entries<ICreatable>())
         {

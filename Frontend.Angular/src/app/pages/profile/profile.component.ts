@@ -10,10 +10,11 @@ import { PaymentService } from '../../services/payment.service';
 import { Transaction } from '../../models/transaction';
 import { MapAddressComponent } from '../../components/map-address/map-address.component';
 import { PaymentHistory } from '../../models/payment-history';
+import { ManageCardsComponent } from '../../components/manage-cards/manage-cards.component';
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule, FormsModule, HeaderComponent, NavigationBarComponent, MapAddressComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, NavigationBarComponent, MapAddressComponent, ManageCardsComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
@@ -36,11 +37,6 @@ export class ProfileComponent {
   };
   payment: PaymentHistory | null = null;
 
-  paymentMethods = [
-    { id: 1, type: 'PayPal', info: 'A*****@live.com', isDefault: true },
-    { id: 2, type: 'Card', info: '--- 4305', cardType: 'visa', isDefault: false },
-    { id: 3, type: 'PayPal', info: 'A*****@live.com', isDefault: false },
-  ];
 
   deleteConfirmation = false;
 
@@ -61,18 +57,18 @@ export class ProfileComponent {
     // this.initializePayPalButton();
   }
 
-  onSubTabChange(subTab: string): void {
+  async onSubTabChange(subTab: string): Promise<void> {
     this.activeSubTab = subTab;
 
     // Check if receiving sub-tab is activated
     if (this.activeSubTab === 'receiving') {
       setTimeout(() => {
-        this.initializePayPalButton();
+        // this.initializePayPalButton();
       }, 1000); // Delay of 1 second
     }
   }
-
-  private loadUserProfile(): void {
+ 
+  loadUserProfile(): void {
     this.userService.getUser().subscribe(
       (user) => {
         this.profile = user;
@@ -92,16 +88,6 @@ export class ProfileComponent {
         console.error('Failed to fetch payment history', err);
       }
     });
-  }
-
-  setDefaultMethod(id: number) {
-    this.paymentMethods.forEach((method) => {
-      method.isDefault = method.id === id;
-    });
-  }
-
-  removeMethod(id: number) {
-    this.paymentMethods = this.paymentMethods.filter((method) => method.id !== id);
   }
 
   setPaymentPreference(preference: string) {
@@ -181,5 +167,4 @@ export class ProfileComponent {
       console.warn('Profile is null. Nothing to update.');
     }
   }
-
 }

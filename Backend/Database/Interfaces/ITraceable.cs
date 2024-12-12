@@ -21,11 +21,11 @@ public interface IOwnable
 
 public interface IAccountable : ICreatable, IUpdatable, IDeletable
 {
-    
+
 }
 
 public interface IOwnableAccountable : IAccountable, IOwnable
 {
-    
+
 }
 

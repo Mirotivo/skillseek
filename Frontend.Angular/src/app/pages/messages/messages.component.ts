@@ -4,18 +4,23 @@ import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../../components/header/header.component';
 import { NavigationBarComponent } from '../../components/navigation-bar/navigation-bar.component';
 import { ChatService } from '../../services/chat.service';
-import { Contact } from '../../models/contact';
+import { Chat } from '../../models/chat';
 import { PropositionService } from '../../services/proposition.service';
+import { ModalComponent } from '../../components/modal/modal.component';
+import { ProposeLessonComponent } from '../../components/propose-lesson/propose-lesson.component';
+import { Listing } from '../../models/listing';
+import { ListingService } from '../../services/listing.service';
 
 @Component({
   selector: 'app-messages',
-  imports: [CommonModule, FormsModule, HeaderComponent, NavigationBarComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, NavigationBarComponent, ProposeLessonComponent, ModalComponent],
   templateUrl: './messages.component.html',
   styleUrls: ['./messages.component.scss'],
 })
 export class MessagesComponent implements OnInit {
-  contacts: Contact[] = [];
-  selectedContact: Contact | null = null; // Default to no selection
+  contacts: Chat[] = [];
+  selectedContact: Chat | null = null;
+  selectedListing!: Listing;
   newMessage = '';
   loading = true; // Add a loading state
   messageSuccess: boolean = false; // Feedback for successful message sending
@@ -26,7 +31,8 @@ export class MessagesComponent implements OnInit {
 
   constructor(
     private chatService: ChatService,
-    private propositionService: PropositionService
+    private propositionService: PropositionService,
+    private listingService: ListingService
   ) {}
 
   ngOnInit(): void {
@@ -37,10 +43,9 @@ export class MessagesComponent implements OnInit {
     this.chatService.getChats().subscribe({
       next: (data) => {
         this.contacts = data;
-        this.selectedContact = this.contacts[0] || null; // Set the first contact as selected if available
-        if (this.selectedContact) {
-          this.loadPropositions(this.selectedContact.studentId);
-        }
+        if (this.contacts.length > 0) {
+          this.selectContact(this.contacts[0]);
+        }  
         this.loading = false;
       },
       error: (err) => {
@@ -50,9 +55,10 @@ export class MessagesComponent implements OnInit {
     });
   }
 
-  selectContact(contact: Contact): void {
+  selectContact(contact: Chat): void {
     this.selectedContact = contact;
     this.loadPropositions(contact.studentId);
+    this.loadListing(this.selectedContact.listingId);
   }
 
   loadPropositions(contactId: number): void {
@@ -67,12 +73,24 @@ export class MessagesComponent implements OnInit {
     });
   }
 
+  loadListing(listingId: number): void {
+    this.listingService.getListing(listingId).subscribe({
+      next: (listing) => {
+        this.selectedListing = listing;
+      },
+      error: (err) => {
+        console.error('Failed to fetch listing:', err);
+      },
+    });
+  }
+
   sendMessage(): void {
     if (this.newMessage.trim() && this.selectedContact) {
       console.log(`Message to ${this.selectedContact.name}: ${this.newMessage}`);
 
       this.chatService.sendMessage({
-        recipientId: this.selectedContact.studentId,
+        listingId: this.selectedContact.listingId,
+        recipientId: this.selectedContact.recipientId,
         content: this.newMessage,
       }).subscribe({
         next: () => {
@@ -92,4 +110,34 @@ export class MessagesComponent implements OnInit {
       });
     }
   }
+
+  respondToProposition(propositionId: number, accept: boolean): void {
+    this.propositionService.respondToProposition(propositionId, accept).subscribe({
+      next: () => {
+        // Update the UI after successful response
+        this.propositions = this.propositions.filter(p => p.id !== propositionId);
+      },
+      error: (err) => {
+        console.error('Failed to respond to proposition:', err);
+      }
+    });
+  }
+
+
+
+  isModalOpen = false;
+
+  openModal(): void {
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.isModalOpen = false;
+  }
+
+  handleProposeLesson(event: { date: string; duration: number; price: number }): void {
+    console.log('Lesson proposed:', event);
+    // Perform the action, e.g., send the proposal to the backend
+  }
+
 }

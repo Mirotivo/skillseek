@@ -27,22 +27,27 @@ public class Lesson
     public int StudentId { get; set; }
 
     [ForeignKey(nameof(Lesson.StudentId))]
-    public User Student { get; set; }
+    public User? Student { get; set; }
 
-    public int TutorId { get; set; }
+    public int ListingId { get; set; }
 
-    [ForeignKey(nameof(Lesson.TutorId))]
-    public User Tutor { get; set; }
+    [ForeignKey(nameof(Lesson.ListingId))]
+    public Listing? Listing { get; set; }
 
     [Required]
-    public bool IsStudentInitiator { get; set; }
+    public bool IsStudentInitiated { get; set; }
 
     [Required]
     [MaxLength(20)]
     public LessonStatus Status { get; set; }
 
+    public Lesson()
+    {
+
+    }
+
     public override string ToString()
     {
-        return $"Student: {Student.FirstName}, Tutor: {Tutor.FirstName}";
+        return $"Lesson: {Id}, StudentId: {StudentId}, ListingId: {ListingId}, Date: {Date}, Duration: {Duration}, Price: {Price:C}, Status: {Status}";
     }
 }

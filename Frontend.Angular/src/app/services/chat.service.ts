@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map, Observable } from 'rxjs';
-import { Contact } from '../models/contact';
+import { Chat } from '../models/chat';
 import { environment } from '../environments/environment';
+import { SendMessage } from '../models/send-message';
 
 @Injectable({
   providedIn: 'root',
@@ -12,7 +13,7 @@ export class ChatService {
 
   constructor(private http: HttpClient) {}
 
-  getChats(): Observable<Contact[]> {
+  getChats(): Observable<Chat[]> {
     const token = localStorage.getItem('token');
 
     if (!token) {
@@ -24,7 +25,7 @@ export class ChatService {
       Authorization: `Bearer ${token}`,
     });
 
-    return this.http.get<Contact[]>(this.apiUrl, { headers });
+    return this.http.get<Chat[]>(this.apiUrl, { headers });
   }
 
   getMessages(): Observable<{ sender: string; content: string; time: string }[]> {
@@ -43,7 +44,7 @@ export class ChatService {
   }
 
 
-  sendMessage(message: { recipientId: number; content: string }): Observable<any> {
+  sendMessage(message: SendMessage): Observable<any> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,

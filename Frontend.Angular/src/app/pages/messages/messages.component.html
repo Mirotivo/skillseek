@@ -29,10 +29,6 @@
       <div class="contact-details">
         <h3>{{ selectedContact.name }}</h3>
         <p>{{ selectedContact.details }}</p>
-        <div class="tags">
-          <span class="tag">Chatwood</span>
-          <span class="tag">Maths</span>
-        </div>
       </div>
       <div class="banner accepted-request">
         <p>You have accepted the request</p>
@@ -74,7 +70,7 @@
     <div class="propositions" *ngIf="activeTab === 'propositions'">
       <h4>Propositions</h4>
       <button class="propose-pack">Propose a pack</button>
-      <button class="propose-lesson">Propose a lesson</button>
+      <button class="propose-lesson" (click)="openModal()">Propose a lesson</button>
       <div class="propositions-section" *ngIf="propositions.length > 0">
         <h3>Propositions for {{ selectedContact.name }}</h3>
         <ul>
@@ -83,6 +79,16 @@
             <p><strong>Duration:</strong> {{ proposition.duration }}</p>
             <p><strong>Price:</strong> ${{ proposition.price }}</p>
             <p><strong>Status:</strong> {{ proposition.status }}</p>
+            <div class="proposition-actions">
+              <!-- Accept Button -->
+              <button class="accept-btn" (click)="respondToProposition(proposition.id, true)">
+                Accept
+              </button>
+              <!-- Refuse Button -->
+              <button class="refuse-btn" (click)="respondToProposition(proposition.id, false)">
+                Refuse
+              </button>
+            </div>  
           </li>
         </ul>
       </div>
@@ -111,3 +117,9 @@
 
   </div>
 </div>
+<app-modal
+  *ngIf="isModalOpen"
+  [isOpen]="isModalOpen"
+  (onClose)="closeModal()">
+  <app-propose-lesson [listing]="selectedListing" [studentId]="selectedContact?.studentId ?? null" (onPropose)="handleProposeLesson($event)" (onClose)="closeModal()"></app-propose-lesson>
+</app-modal>

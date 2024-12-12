@@ -17,16 +17,16 @@ public class Review : IAccountable
     public int ReviewerId { get; set; }
 
     [ForeignKey(nameof(Review.ReviewerId))]
-    public User Reviewer { get; set; }
+    public User? Reviewer { get; set; }
 
     [Required]
     public int RevieweeId { get; set; }
 
     [ForeignKey(nameof(Review.RevieweeId))]
-    public User Reviewee { get; set; }
+    public User? Reviewee { get; set; }
 
     [Required]
-    public ReviewType Type { get; set; } // Differentiates Review vs Recommendation
+    public ReviewType Type { get; set; }
 
     [Required]
     [Range(1, 5)]
@@ -38,13 +38,19 @@ public class Review : IAccountable
     [MaxLength(500)]
     public string Comments { get; set; }
 
-    public bool Active { get ; set; }
-    public DateTime CreatedAt { get ; set; }
-    public DateTime UpdatedAt { get ; set; }
-    public DateTime? DeletedAt { get ; set; }
+    public bool Active { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
 
     public Review()
     {
+        Title = string.Empty;
+        Comments = string.Empty;
+    }
 
+    public override string ToString()
+    {
+        return $"Review: {Id}, ReviewerId: {ReviewerId}, RevieweeId: {RevieweeId}, Rating: {Rating}, Type: {Type}, Title: {Title}";
     }
 }
