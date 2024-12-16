@@ -1,0 +1,163 @@
+<app-header></app-header>
+<app-navigation-bar></app-navigation-bar>
+<div class="evaluations-page">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <ul>
+        <li [class.active]="activeTab === 'reviews'" (click)="activeTab = 'reviews'">My Reviews</li>
+        <li [class.active]="activeTab === 'recommendations'" (click)="activeTab = 'recommendations'">My Recommendations</li>
+        <li [class.active]="activeTab === 'sponsorship'" (click)="activeTab = 'sponsorship'">Sponsorship</li>
+      </ul>
+    </div>
+  
+    <!-- Main Content -->
+    <div class="main-content" *ngIf="activeTab === 'reviews'" >
+      <!-- Reviews Pending -->
+      <div class="reviews-pending">
+        <h3>Reviews Pending</h3>
+        <ul>
+          <li *ngFor="let review of pendingReviews">
+            <div class="review-details">
+              <div class="review-avatar">
+                <span>{{ review.name[0] }}</span>
+              </div>
+              <div>
+                <h4>{{ review.name }}</h4>
+                <p>{{ review.subject }}</p>
+                <p>{{ review.feedback }}</p>
+              </div>
+            </div>
+            <button class="btn leave-review-btn" (click)="openModal(review.revieweeId)">Leave a Review</button>
+          </li>
+        </ul>
+        <a href="#" class="see-all">See all pending reviews ({{ remainingReviews }} remaining)</a>
+      </div>
+  
+      <!-- Reviews Section -->
+      <div class="reviews-section">
+        <div class="reviews-tabs">
+          <button [class.active]="activeSubTab === 'received'" (click)="setActiveTab('received')">
+            Reviews Received
+          </button>
+          <button [class.active]="activeSubTab === 'sent'" (click)="setActiveTab('sent')">
+            Reviews Sent
+          </button>
+        </div>
+  
+        <!-- Reviews Content -->
+        <div *ngIf="activeSubTab === 'received'" class="reviews-content">
+          <h3>Reviews Received</h3>
+          <ul>
+            <li *ngFor="let review of receivedReviews">
+              <div class="review-details">
+                <div class="review-avatar">
+                  <img *ngIf="review.avatar" [src]="review.avatar" alt="{{ review.name }}" />
+                  <span *ngIf="!review.avatar">{{ review.name[0] }}</span>
+                </div>
+                <div>
+                  <h4>{{ review.name }}</h4>
+                  <p>{{ review.subject }} student</p>
+                  <p>{{ review.feedback }}</p>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+  
+        <div *ngIf="activeSubTab === 'sent'" class="reviews-content">
+          <h3>Reviews Sent</h3>
+          <ul>
+            <li *ngFor="let review of sentReviews" class="review-item">
+              <div class="review-details">
+                <div class="review-avatar">
+                  <img *ngIf="review.avatar" [src]="review.avatar" alt="{{ review.name }}" />
+                  <span *ngIf="!review.avatar">{{ review.name[0] }}</span>
+                </div>
+                <div class="review-info">
+                  <h4>{{ review.name }}</h4>
+                  <p>{{ review.subject }} student</p>
+                  <p>{{ review.feedback }}</p>
+                </div>
+              </div>
+            </li>
+          </ul>
+          </div>
+      </div>
+    </div>
+
+    <div *ngIf="activeTab === 'recommendations'" >
+      <div class="container">
+        <div class="header">
+          <h2>Boost your visibility</h2>
+          <h2>Enhance your profile</h2>
+          <h2>Get more lesson requests</h2>
+        </div>
+        
+        <div class="description">
+          <p>Superprof is based on trust and reputation. You can ask for recommendations from your personal network (friends, family, alumni, colleagues, ...). Your recommendations will be visible on your tutor listing once they have been verified by our team.</p>
+        </div>
+      
+        <div class="recommendation-links">
+          <h3>Ask for recommendations via:</h3>
+          <button class="btn-email">Email</button>
+          <button class="btn-facebook">Facebook</button>
+          <button class="btn-messenger">Messenger</button>
+          <button class="btn-linkedin">LinkedIn</button>
+        </div>
+      
+        <div class="direct-link">
+          <h3>Or directly share a link:</h3>
+          <div class="link-container">
+            <input type="text" [value]="recommendationLink" readonly />
+            <button class="btn-copy" (click)="copyLink()">Copy the link</button>
+          </div>
+        </div>
+              
+        <div class="recommendations">
+          <div class="recommendation" *ngFor="let recommendation of recommendations">
+            <h4>{{ recommendation.name }}</h4>
+            <p>{{ recommendation.feedback }}</p>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  
+    <div *ngIf="activeTab === 'sponsorship'" >
+      <div class="sponsorship">
+        <div class="header">
+          <img src="assets/rocket-icon.png" alt="Rocket Icon" class="icon" />
+          <h2>Enter to win 1 month free of our Premium pass by referring a friend!</h2>
+          <p>
+            To refer a friend all you have to do is share your personal link. Your friend will then need to
+            create a listing on Superprof in order to validate the referral. The refer a friend offer will only
+            be valid if those you are inviting are new to Superprof.
+          </p>
+        </div>
+      
+        <div class="invite">
+          <input
+            type="text"
+            placeholder="Insert the email addresses separated by semi-colons (;)"
+            class="email-input"
+          />
+          <button class="send-invitation">Send the Invitation</button>
+        </div>
+      
+        <div class="share">
+          <span>Or</span>
+          <div class="link-container">
+            <input type="text" [value]="sponsorLink" readonly />
+            <div class="social-icons">
+              <button class="facebook"></button>
+              <button class="twitter"></button>
+              <button class="linkedin"></button>
+            </div>
+          </div>
+        </div>
+      </div>      
+    </div>
+  </div>
+  <app-modal *ngIf="isModalOpen" [isOpen]="isModalOpen" (onClose)="closeModal()">
+    <app-leave-review  [revieweeId]="selectedRevieweeId" (onClose)="closeModal()"></app-leave-review>
+  </app-modal>

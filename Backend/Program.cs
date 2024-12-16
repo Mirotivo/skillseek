@@ -23,6 +23,7 @@ var key = builder.Configuration.GetValue<string>("Jwt:Key");
 // Add services to the container.
 builder.Services.AddSignalR();
 builder.Services.AddTransient<CustomMiddleware>();
+builder.Services.AddTransient<GlobalExceptionMiddleware>();
 builder.Services.AddSingleton<Dictionary<string, string>>(new Dictionary<string, string>());
 // var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 // builder.Services.AddDbContext<skillseekDbContext>(options =>
@@ -36,11 +37,11 @@ string connString = builder.Configuration.GetConnectionString("Sqlite") ?? "";
 builder.Services.AddDbContext<skillseekDbContext>(option => option.UseSqlite(connString));
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
-builder.Services.AddTransient<IStationGroupService, StationGroupService>();
-builder.Services.AddTransient<ICategoryService, CategoryService>();
-builder.Services.AddTransient<IProductService, ProductService>();
+builder.Services.AddTransients(Assembly.GetExecutingAssembly());
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
-builder.Services.AddTransient<IPurchaseOrderService, PurchaseOrderService>();
+builder.Services.AddScoped<PayPalPaymentGateway>();
+builder.Services.AddScoped<StripePaymentGateway>();
+builder.Services.AddScoped<PaymentGatewayFactory>();
 builder.Services
         .AddAuthentication(options =>
         {
@@ -58,6 +59,7 @@ builder.Services
                 ValidateIssuer = false,
                 ValidateAudience = false
             };
+            
             options.Events = new JwtBearerEvents
             {
                 OnAuthenticationFailed = context =>
@@ -73,6 +75,13 @@ builder.Services
                 },
                 OnMessageReceived = context =>
                 {
+                    var accessToken = context.Request.Query["access_token"];
+                    var path = context.HttpContext.Request.Path;
+                    if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notification"))
+                    {
+                        context.Token = accessToken;
+                    }
+
                     // Invoked when a WebSocket or Long Polling request is received.
                     Console.WriteLine("Message received: " + context.Token);
                     return Task.CompletedTask;
@@ -93,7 +102,11 @@ builder.Services
 
         });
 
+// Configurations
+builder.Services.Configure<StripeOptions>(builder.Configuration.GetSection("Stripe"));
+builder.Services.Configure<PayPalOptions>(builder.Configuration.GetSection("PayPal"));
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -129,6 +142,20 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads")),
+    RequestPath = "/uploads",
+    OnPrepareResponse = ctx =>
+    {
+        Console.WriteLine($"Serving file: {ctx.File.PhysicalPath}");
+    }
+});
 app.UseCookiePolicy();
 
 app.UseRouting(); // Add this line to configure routing
@@ -136,9 +163,13 @@ app.UseRouting(); // Add this line to configure routing
 app.UseCors(options =>
 {
     options.WithOrigins(
+        "http://localhost:4200",
         "https://localhost:8000",
         "https://localhost:9000/",
-        "https://92.205.162.126:8000"
+        "https://92.205.162.126:8000",
+        "http://110.144.148.168",
+        "http://110.144.148.168:80",
+        "http://110.144.148.168:8000"
     );
     // options.AllowAnyOrigin();
     options.AllowAnyMethod();
@@ -148,6 +179,7 @@ app.UseCors(options =>
 
 app.UseAuthorization();
 app.UseMiddleware<CustomMiddleware>();
+app.UseMiddleware<GlobalExceptionMiddleware>();
 // app.UseAuthentication(); // Add authentication middleware
 
 // app.MapControllers();
@@ -155,6 +187,7 @@ app.UseMiddleware<CustomMiddleware>();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
+    app.MapHub<NotificationHub>("/notification");
     endpoints.MapHub<StationCommunicationHub>("/communication");
     endpoints.MapHub<WebRtcHub>("/webrtc");
     endpoints.MapGet("/", async context =>

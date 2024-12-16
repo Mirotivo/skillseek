@@ -77,10 +77,10 @@ function Generate-SSLCertificates {
 }
 
 # Generate certificates and update Backend appsettings
-# Generate-SSLCertificates -dockerName "skillseek-backend" -folderPath ".\Backend" -appSettingsFile ".\appsettings.Production.json"
+# Generate-SSLCertificates -dockerName "backend" -folderPath ".\Backend" -appSettingsFile ".\appsettings.Production.json"
 
 # Generate certificates and update Frontend appsettings
-# Generate-SSLCertificates  -dockerName "skillseek-frontend" -folderPath ".\Frontend" -appSettingsFile ".\appsettings.Production.json"
+# Generate-SSLCertificates  -dockerName "frontend" -folderPath ".\Frontend" -appSettingsFile ".\appsettings.Production.json"
 
 # Run Docker Compose
 Write-Host "Running Docker Compose..." -ForegroundColor Cyan

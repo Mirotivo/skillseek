@@ -1,0 +1,46 @@
+<app-header></app-header>
+<div class="landing-page">
+  <!-- Header Section -->
+  <div class="header-section text-center">
+    <h1>Learn with the best!</h1>
+    <div class="search-bar">
+      <input type="text" placeholder="Try 'Drawing'" [(ngModel)]="searchQuery" />
+      <button class="btn btn-primary" (click)="performSearch()">Search</button>
+    </div>
+    <div class="categories">
+      <div class="category" *ngFor="let category of categories">
+        <span>{{ category.name }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Featured Tutors Section -->
+  <div class="tutors-section">
+    <h2>30 million evaluated private tutors <span>★★★★★</span></h2>
+    <div class="tutors-grid">
+      <div class="tutor-card" *ngFor="let tutor of tutors" (click)="navigateToPayment(tutor.id)">
+        <img [src]="tutor.image" alt="{{ tutor.name }}" />
+        <div class="tutor-info">
+          <h3>{{ tutor.name }}</h3>
+          <p>{{ tutor.location }}</p>
+          <p>{{ tutor.aboutYou }}</p>
+          <p><strong>{{ tutor.rates.hourly }}</strong> • 1st lesson free</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Testimonials Section -->
+  <div class="testimonials-section">
+    <h2>The Perfect Match</h2>
+    <p>More than a million students have given a score of 5 stars to their tutor</p>
+    <div class="testimonials-slider">
+      <div class="testimonial" *ngFor="let testimonial of testimonials">
+        <h4>{{ testimonial.name }}</h4>
+        <p>{{ testimonial.subject }} tutor</p>
+        <p>{{ testimonial.feedback }}</p>
+        <p>— {{ testimonial.reviewer }} ★★★★★</p>
+      </div>
+    </div>
+  </div>
+</div>

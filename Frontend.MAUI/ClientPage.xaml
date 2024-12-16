@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Frontend.MAUI.ClientPage">
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+            <Label Text="Client" FontSize="Large" HorizontalOptions="Center" Margin="0,0,0,20"/>
+            <Entry x:Name="poIDEntry" Placeholder="Enter order number"/>
+            <Button Text="Check" Clicked="SubscribeButton_Clicked"/>
+            <Label x:Name="orderStatusLabel" Text="Current Status: " HorizontalOptions="Center" Margin="0,20,0,0"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

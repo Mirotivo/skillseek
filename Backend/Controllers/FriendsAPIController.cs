@@ -11,11 +11,12 @@ using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using skillseek.Controllers;
 
 
 [Route("api/friends")]
 [ApiController]
-public class FriendsAPIController : ControllerBase
+public class FriendsAPIController : BaseController
 {
 
     private readonly ILogger<FriendsAPIController> _logger;
@@ -63,7 +64,7 @@ public class FriendsAPIController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "An error occurred while fetching friends.");
-            return StatusCode(500, "Internal server error");
+            return StatusCode(StatusCodes.Status500InternalServerError, "Internal server error");
         }
     }
 

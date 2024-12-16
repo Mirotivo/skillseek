@@ -1,0 +1,13 @@
+<div class="profile-image">
+  <!-- Display the image if available -->
+  <img *ngIf="showImage" [src]="profileImage" alt="Profile Photo" class="profile-photo" />
+
+  <!-- Display initials if no image is available -->
+  <div *ngIf="showInitials" class="profile-initials">{{ getInitials() }}</div>
+
+  <!-- Display a placeholder while data is being fetched -->
+  <div *ngIf="!showImage && !showInitials" class="profile-loading-placeholder">
+    <span class="loading-spinner"></span>
+    <p>Loading...</p>
+  </div>
+</div>

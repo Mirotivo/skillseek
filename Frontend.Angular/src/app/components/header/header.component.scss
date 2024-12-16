@@ -1,0 +1,139 @@
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(to right, #cfe2f3, #d4e1ec);
+  padding: 12px 25px;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+
+  .logo {
+    .logo-link {
+      text-decoration: none;
+      color: #4a90e2;
+      font-size: 1.7rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.3s ease-in-out;
+
+      &:hover {
+        color: #1d75a5;
+      }
+    }
+  }
+
+  .header-title {
+    flex: 1;
+    text-align: center;
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #4a90e2;
+      margin: 0;
+    }
+  }
+
+  .header-menu {
+    position: relative;
+
+    .profile-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s ease-in-out;
+
+      img {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        box-shadow: 0px 3px 7px rgba(0, 0, 0, 0.1);
+      }
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+
+    .dropdown-menu {
+      position: absolute;
+      top: 55px;
+      right: 0;
+      background: #ffffff;
+      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      padding: 12px;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+
+      a {
+        display: block;
+        padding: 12px 22px;
+        text-decoration: none;
+        color: #4a90e2;
+        border-radius: 6px;
+        transition: background 0.3s ease-in-out, color 0.3s ease-in-out;
+
+        &:hover {
+          background: #d4e1ec;
+          color: #1d75a5;
+        }
+      }
+    }
+
+    &:hover {
+      .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+  }
+
+  .guest-menu {
+    display: flex;
+    gap: 20px;
+
+    a {
+      color: #4a90e2;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1rem;
+      padding: 10px 20px;
+      border: 1px solid #4a90e2;
+      border-radius: 6px;
+      transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+
+      &:hover {
+        background-color: #4a90e2;
+        color: #fff;
+      }
+    }
+  }
+
+  .role-switcher {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .role-button {
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      color: #333;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background-color: #e6e6e6;
+      }
+
+      &.active {
+        background-color: #007bff;
+        border-color: #0056b3;
+        color: white;
+      }
+    }
+  }
+}

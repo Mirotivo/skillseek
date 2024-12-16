@@ -16,6 +16,8 @@ public class RegisterViewModel
     [Compare(nameof(Password), ErrorMessage = "Passwords do not match")]
     public string ConfirmPassword { get; set; }
 
+    public string? ReferralToken { get; set; }
+
     public RegisterViewModel()
     {
         Email = string.Empty;

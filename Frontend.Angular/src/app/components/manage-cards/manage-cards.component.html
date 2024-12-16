@@ -1,0 +1,51 @@
+<div class="payment-method-section">
+    <!-- <h3>Payment method</h3>
+    <div class="payment-method-card">
+      <div class="method-details">
+        <img src="assets/paypal-logo.png" alt="PayPal Logo" class="method-icon" />
+        <p class="method-name">PayPal account</p>
+      </div>
+      <div class="method-status">
+        <span class="status-icon">✅</span>
+      </div>
+    </div>
+    <button class="replace-method-btn">Replace this payment method</button>
+    <div class="paypal-button-container" id="paypal-button-container"></div> -->
+    
+    <h3>Default payment method</h3>
+    <div class="method-list">
+      <div
+        *ngFor="let card of savedCards"
+        class="payment-method"
+        [class.default]="card.isDefault"
+      >
+        <div class="method-details">
+          <img [src]="card.icon" [alt]="card.type + ' Logo'" class="method-icon" />
+          <div>
+            <p class="method-name">{{ card.type }}</p>
+            <p class="method-info"> **** **** **** {{ card.last4 }}</p>
+          </div>
+        </div>
+        <div class="method-actions">
+          <button
+            class="favorite"
+            [class.active]="card.isDefault"
+            (click)="setAsDefault(card.id)"
+          >
+            ❤️
+          </button>
+          <button class="delete" (click)="removeCard(card.id)">🗑️</button>
+        </div>
+      </div>
+    </div>
+  
+    <form (submit)="saveCard($event)">
+        <label for="card-holder-name">Cardholder Name</label>
+        <input id="card-holder-name" [(ngModel)]="cardHolderName" name="cardHolderName" required />
+  
+        <div id="card-element"></div>
+        <div id="card-errors" role="alert"></div>
+  
+        <button type="submit" [disabled]="loading" class="add-method-btn">Add a payment method</button>
+      </form>
+  </div>

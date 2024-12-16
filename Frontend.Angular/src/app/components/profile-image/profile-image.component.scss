@@ -1,0 +1,73 @@
+.profile-image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f4f6;
+  /* Subtle gray for the background */
+  border: 2px solid #d1d5db;
+  /* Light border for definition */
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  .profile-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .profile-initials {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #4caf50;
+    /* Vibrant green background */
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .profile-loading-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #e0e0e0;
+    font-size: 0.9rem;
+    color: #616161;
+
+    .loading-spinner {
+      width: 30px;
+      height: 30px;
+      border: 3px solid #cfd8dc;
+      /* Light gray */
+      border-top: 3px solid #007bff;
+      /* Vibrant blue for the spinner */
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 5px;
+    }
+
+    p {
+      margin: 0;
+    }
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}

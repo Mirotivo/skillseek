@@ -1,0 +1,53 @@
+<div class="payment-page">
+  <!-- Back Button -->
+  <button class="back-button" (click)="goBack()">←</button>
+
+  <div *ngIf="loading" class="loading">Loading listing details...</div>
+  <div *ngIf="!loading && listing" class="payment-container">
+
+    <!-- Listing Section -->
+    <div class="tutor-section">
+      <img [src]="listing.image" alt="{{ listing.name }}" class="tutor-image" />
+      <div class="tutor-info">
+        <h2>{{ listing.name }}</h2>
+        <p>★★★★★ ({{ listing.reviews }} reviews)</p>
+        <p class="contacted-info">
+          ❤️ {{ listing.name }} is very coveted, he has already been contacted {{ listing.contactedCount }} times this
+          month.
+        </p>
+      </div>
+    </div>
+
+    <!-- Subscription Section -->
+    <div class="subscription-section">
+      <h2>{{ subscription.title }}</h2>
+      <p class="subtitle">{{ subscription.subtitle }}</p>
+      <div class="price">
+        <span>${{ subscription.price }}</span>
+      </div>
+      <ul class="benefits">
+        <li *ngFor="let benefit of subscription.benefits">
+          <span>✔️</span> {{ benefit }}
+        </li>
+      </ul>
+    </div>
+
+    <!-- Payment Section -->
+    <div class="payment-section">
+      <h3>Payment Method</h3>
+      <div class="payment-options">
+        <button [class.selected]="paymentMethod === 'card'" (click)="onPaymentMethodChange('card')">
+          Card payment
+        </button>
+        <button [class.selected]="paymentMethod === 'paypal'" (click)="onPaymentMethodChange('paypal')">
+          PayPal payment
+        </button>
+      </div>
+      <div class="paypal-section" *ngIf="paymentMethod === 'paypal'">
+        <!-- <p>You will be redirected to PayPal to complete your purchase.</p> -->
+        <!-- <button class="paypal-button" (click)="onPay()">Pay with PayPal</button> -->
+        <div id="paypal-button-container"></div>
+      </div>
+    </div>
+  </div>
+</div>

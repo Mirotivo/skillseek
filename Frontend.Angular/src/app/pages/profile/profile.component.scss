@@ -1,0 +1,783 @@
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  border-bottom: 2px solid #ddd;
+  margin-bottom: 1rem;
+
+  .tab {
+    font-size: 1.1rem;
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(135deg, #f9f9f9, #e3f2fd);
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    border: none;
+    outline: none;
+  }
+
+  .tab.active {
+    background: linear-gradient(135deg, #007bff, #00c6ff);
+    /* Vibrant gradient for active tab */
+    color: white;
+    font-weight: bold;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .tab:hover {
+    background: linear-gradient(135deg, #e0f7fa, #b3e5fc);
+    transform: scale(1.05);
+    /* Slight hover effect */
+  }
+}
+
+.profile-page {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; // Space between cards
+  padding: 20px;
+  justify-content: center; // Center-align cards
+  background-color: #f9f9f9; // Light background for contrast
+  font-family: 'Inter', sans-serif;
+
+  .profile-section {
+    flex: 1 1 calc(50% - 20px); // Take up 50% width with a gap
+    max-width: 400px; // Limit maximum width of each card
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); // Floating card effect
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px); // Slight lift on hover
+      box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    h4 {
+      font-size: 1.5rem;
+      color: #1976d2;
+      margin-bottom: 15px;
+      text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #555;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: #f9f9f9;
+        transition: border 0.3s ease;
+
+        &:focus {
+          border-color: #1976d2;
+          outline: none;
+        }
+      }
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background: linear-gradient(135deg, #1976d2, #64b5f6);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+
+      &:hover {
+        background: linear-gradient(135deg, #1565c0, #42a5f5);
+        transform: scale(1.05);
+      }
+    }
+
+    .profile-photo {
+      width: 100%;
+      max-width: 150px;
+      height: auto;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // For small screens
+  @media (max-width: 768px) {
+    .profile-section {
+      flex: 1 1 100%; // Take full width for smaller screens
+      max-width: none;
+    }
+  }
+}
+
+
+.invoices-page {
+  width: 100%;
+  max-width: 900px;
+  margin: 2rem auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  font-family: 'Inter', sans-serif;
+
+  h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .invoice-table-container {
+    width: 100%;
+    overflow-x: auto; // For horizontal scrolling on smaller screens
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      text-align: left;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+
+      thead {
+        background: linear-gradient(135deg, #1976d2, #64b5f6);
+        color: #fff;
+
+        th {
+          padding: 1rem;
+          font-size: 1rem;
+          font-weight: bold;
+          text-align: left;
+        }
+      }
+
+      tbody {
+        tr {
+          border-bottom: 1px solid #eee;
+
+          &:hover {
+            background: #f9f9f9;
+          }
+
+          td {
+            padding: 1rem;
+            font-size: 0.95rem;
+            color: #555;
+
+            &.price {
+              font-weight: bold;
+              color: #43a047; // Green for prices
+            }
+
+            .download-btn {
+              background-color: #1976d2;
+              color: #fff;
+              border: none;
+              border-radius: 50%;
+              width: 2rem;
+              height: 2rem;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              cursor: pointer;
+              font-size: 1rem;
+              transition: background 0.3s;
+
+              &:hover {
+                background-color: #1565c0;
+              }
+            }
+          }
+        }
+
+        tr:last-child {
+          border-bottom: none;
+        }
+      }
+    }
+  }
+
+  .no-invoices-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #777;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    table {
+      thead th {
+        font-size: 0.9rem;
+      }
+
+      tbody td {
+        font-size: 0.85rem;
+      }
+    }
+  }
+}
+
+.payment-page {
+  display: flex;
+  height: 100vh; // Full viewport height
+  gap: 20px; // Space between the left tabs and main content
+  padding: 20px;
+  background-color: #f9f9f9; // Light background for overall contrast
+
+  .payments-left-tabs {
+    flex: 0 0 250px; // Fixed width for the left tabs
+    background: linear-gradient(135deg, #ffffff, #f9f9f9); // Subtle gradient
+    border-radius: 12px;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.1); // Floating card effect
+    overflow: hidden; // No overflow for rounded edges
+    font-family: 'Inter', sans-serif;
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      li {
+        padding: 15px 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        color: #555;
+        cursor: pointer;
+        transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        position: relative;
+
+        &:hover {
+          background: linear-gradient(135deg, #e3f2fd, #bbdefb); // Light hover background
+          color: #1976d2; // Vibrant hover text color
+          transform: translateX(5px); // Slide effect on hover
+        }
+
+        &::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+          height: 0;
+          width: 4px;
+          background: #1976d2; // Active tab indicator color
+          transition: height 0.3s ease;
+        }
+
+        &.active {
+          background: linear-gradient(135deg, #1976d2, #64b5f6); // Active tab gradient
+          color: #fff;
+
+          &::before {
+            height: 100%; // Full height for the active indicator
+          }
+        }
+      }
+    }
+  }
+
+  .payments-main-content {
+    flex: 1; // Take up remaining width
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.1); // Floating card effect
+    padding: 20px;
+    overflow-y: auto; // Scroll for long content
+    display: flex;
+    flex-direction: column;
+
+    // Sections inside payments-main-content
+    .payment-history-container {
+      width: 100%;
+      max-width: 900px;
+      margin: 2rem auto;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+      font-family: 'Inter', sans-serif;
+
+      h2 {
+        font-size: 1.8rem;
+        color: #333;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .balance-summary {
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+        margin-bottom: 2rem;
+
+        .balance-card {
+          flex: 1;
+          text-align: center;
+          background: linear-gradient(135deg, #e3f2fd, #ffffff);
+          border-radius: 12px;
+          padding: 1.5rem;
+          box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+          &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+          }
+
+          h2 {
+            font-size: 2rem;
+            color: #1976d2;
+            margin-bottom: 0.5rem;
+          }
+
+          p {
+            font-size: 1rem;
+            color: #555;
+          }
+        }
+      }
+
+      .payment-table {
+        width: 100%;
+        overflow-x: auto;
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          background: #fff;
+          text-align: left;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+
+          thead {
+            background: linear-gradient(135deg, #1976d2, #64b5f6);
+            color: #fff;
+
+            th {
+              padding: 1rem;
+              font-size: 1rem;
+              font-weight: bold;
+              text-align: left;
+            }
+          }
+
+          tbody {
+            tr {
+              border-bottom: 1px solid #eee;
+
+              &:hover {
+                background: #f9f9f9;
+              }
+
+              td {
+                padding: 1rem;
+                font-size: 0.95rem;
+                color: #555;
+
+                &.payment-name {
+                  font-weight: bold;
+                  color: #1976d2;
+                }
+
+                &.amount {
+                  font-weight: bold;
+
+                  &.negative {
+                    color: #e53935;
+                    /* Red for negative amounts */
+                  }
+                }
+
+                &.net {
+                  font-weight: bold;
+                  color: #43a047;
+                  /* Green for net values */
+                }
+
+                .icon {
+                  font-size: 1.2rem;
+                }
+              }
+            }
+
+            tr:last-child {
+              border-bottom: none;
+            }
+          }
+        }
+      }
+
+      @media (max-width: 768px) {
+        .balance-summary {
+          flex-direction: column;
+        }
+
+        .payment-table {
+          table {
+            thead {
+              th {
+                font-size: 0.9rem;
+              }
+            }
+
+            tbody {
+              td {
+                font-size: 0.85rem;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .payment-methods-container {
+      width: 100%;
+      max-width: 700px;
+      margin: 2rem auto;
+      background: linear-gradient(135deg, #ffffff, #f9f9f9);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+
+      h2 {
+        font-size: 1.8rem;
+        color: #333;
+        margin-bottom: 1rem;
+        text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      p {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 2rem;
+        line-height: 1.5;
+      }
+
+      .method-list {
+        margin-bottom: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .payment-method {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(135deg, #e3f2fd, #ffffff);
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .method-details {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+
+          .method-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #90caf9, #42a5f5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: white;
+          }
+
+          .method-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #1976d2;
+            margin: 0;
+          }
+
+          .method-info {
+            font-size: 0.9rem;
+            color: #666;
+            margin: 0;
+          }
+        }
+
+        .method-actions {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+
+          button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #999;
+            transition: color 0.3s ease, transform 0.2s ease;
+
+            &:hover {
+              color: #ff5252;
+              transform: scale(1.1);
+            }
+
+            &.favorite {
+              &.active {
+                color: #ff5a5f;
+              }
+            }
+
+            &.delete {
+              color: #e53935;
+            }
+          }
+        }
+      }
+
+      .add-method-btn {
+        width: 100%;
+        padding: 1rem;
+        background: linear-gradient(135deg, #64b5f6, #2196f3);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        font-weight: bold;
+        transition: background 0.3s ease, transform 0.2s ease;
+
+        &:hover {
+          background: linear-gradient(135deg, #1976d2, #1565c0);
+          transform: scale(1.05);
+        }
+      }
+    }
+
+    .payment-receiving-container {
+      max-width: 600px;
+      margin: 2rem auto;
+      font-family: Arial, sans-serif;
+
+      .payment-method-section,
+      .payment-preference-section {
+        background: #fff;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+      }
+
+      .payment-method-section h3,
+      .payment-preference-section h3 {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      .payment-method-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f9f9f9;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .method-details {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .method-icon {
+        width: 40px;
+        height: 40px;
+      }
+
+      .method-name {
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      .method-status .status-icon {
+        font-size: 1.5rem;
+        color: #28a745;
+      }
+
+      .replace-method-btn {
+        width: 100%;
+        padding: 0.75rem;
+        background: #ff5a5f;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background 0.3s;
+      }
+
+      .replace-method-btn:hover {
+        background: #ff8085;
+      }
+
+      .preference-option {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        background: #f9f9f9;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        position: relative;
+      }
+
+      .preference-option.selected {
+        background: #28a745;
+        color: white;
+      }
+
+      .preference-option input[type='radio'] {
+        margin-top: 0.5rem;
+      }
+
+      .preference-option label {
+        cursor: pointer;
+        width: 100%;
+      }
+
+      .preference-title {
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      .preference-subtitle {
+        font-size: 0.85rem;
+        color: inherit;
+      }
+    }
+
+    .compensation-container {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1.5rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      font-family: Arial, sans-serif;
+
+
+      .compensation-container h3 {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .compensation-container p {
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 2rem;
+        line-height: 1.5;
+      }
+
+      .compensation-selector {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .adjust-btn {
+        background: #ffc107;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .adjust-btn:hover {
+        background: #ffdd57;
+      }
+
+      .compensation-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ffa500;
+      }
+
+      .compensate-btn {
+        background: #ffa500;
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .compensate-btn:hover {
+        background: #ffc107;
+      }
+    }
+  }
+}
+
+// Animations for content appearance
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive adjustments for smaller screens
+@media (max-width: 768px) {
+  .payment-page {
+    flex-direction: column; // Stack the tabs and content vertically
+
+    .payments-left-tabs {
+      flex: none;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .payments-main-content {
+      padding: 10px;
+    }
+  }
+}

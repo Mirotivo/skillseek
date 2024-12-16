@@ -6,7 +6,7 @@ namespace skillseek.Controllers;
 
 [Route("api/stationgroups")]
 [ApiController]
-public class StationGroupsAPIController : ControllerBase
+public class StationGroupsAPIController : BaseController
 {
     private readonly IStationGroupService _stationGroupService;
 

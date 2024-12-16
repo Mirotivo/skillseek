@@ -10,49 +10,30 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using System;
+using skillseek.Controllers;
 
 [Route("api/users")]
 [ApiController]
-public class UsersAPIController : ControllerBase
+public class UsersAPIController : BaseController
 {
 
-    private readonly ILogger<UsersAPIController> _logger;
-    private readonly Dictionary<string, string> _users;
-    private readonly IHostEnvironment _hostingEnvironment;
 
-    private readonly skillseekDbContext dbContext;
-    private readonly IPasswordHasher<User> passwordHasher;
-    private readonly IConfiguration _config;
+    private readonly IUserService _userService;
 
-    public UsersAPIController(ILogger<UsersAPIController> logger,
-        Dictionary<string, string> users, IHostEnvironment hostingEnvironment, skillseekDbContext dbContext, IPasswordHasher<User> passwordHasher, IConfiguration config)
+    public UsersAPIController(
+        IUserService userService
+    )
     {
-        _logger = logger;
-        _users = users;
-        _hostingEnvironment = hostingEnvironment;
-        this.dbContext = dbContext;
-        this.passwordHasher = passwordHasher;
-        _config = config;
+        _userService = userService;
     }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterViewModel model)
     {
-        // Check if user already exists
-        if (await dbContext.Users.AnyAsync(u => u.Email == model.Email))
+        if (!await _userService.RegisterUser(model))
         {
             return BadRequest("A user with this email address already exists.");
         }
-
-        // Create new user
-        User user = new User
-        {
-            Email = model.Email
-        };
-        user.PasswordHash = passwordHasher.HashPassword(user, model.Password);
-
-        dbContext.Users.Add(user);
-        await dbContext.SaveChangesAsync();
 
         return Ok();
     }
@@ -61,41 +42,52 @@ public class UsersAPIController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
-        var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
-
-        if (user != null)
+        var result = await _userService.LoginUser(model);
+        if (result == null)
         {
-            var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, model.Password);
-
-            if (result == PasswordVerificationResult.Success)
-            {
-                var claims = new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.Email),
-                    new Claim(ClaimTypes.Email, user.Email)
-                };
-
-                var token = new JwtSecurityToken(
-                    claims: claims,
-                    expires: DateTime.UtcNow.AddDays(7),
-                    signingCredentials: new SigningCredentials(
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"] ?? "")),
-                        SecurityAlgorithms.HmacSha256Signature)
-                );
-
-                var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-                Console.WriteLine("Generated Token: " + tokenString);
-
-                return Ok(new
-                {
-                    token = tokenString
-                });
-            }
+            return Unauthorized();
         }
 
-        return Unauthorized();
+        return Ok(new { token = result.Value.Token, roles = result.Value.Roles });
     }
 
+
+    [HttpGet("me")]
+    public async Task<IActionResult> GetAsync()
+    {
+        var userId = GetUserId();
+        var user = await _userService.GetUser(userId);
+
+        if (user == null)
+        {
+            return NotFound("User not found.");
+        }
+
+        return Ok(user);
+    }
+
+    [HttpGet("by-token/{recommendationToken}")]
+    public async Task<IActionResult> GetUserByToken(string recommendationToken)
+    {
+        var user = await _userService.GetUserByToken(recommendationToken);
+        if (user == null)
+        {
+            return NotFound("User not found.");
+        }
+
+        return Ok(user);
+    }
+
+    [HttpPut("me")]
+    public async Task<IActionResult> UpdateAsync([FromBody] UserDto updatedUser)
+    {
+        var userId = GetUserId();
+        if (!await _userService.UpdateUser(userId, updatedUser))
+        {
+            return NotFound("User not found.");
+        }
+
+        return Ok(new { success = true, message = "Profile updated successfully." });
+    }
 
 }

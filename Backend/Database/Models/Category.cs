@@ -8,4 +8,9 @@ public class Category
 
     [MaxLength(255)]
     public string Name { get; set; }
+
+    public Category()
+    {
+        Name = string.Empty;
+    }
 }

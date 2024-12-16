@@ -1,0 +1,102 @@
+<h2>Create a New Listing</h2>
+<form class="create-listing-form" (ngSubmit)="submitCreateListing()">
+  <!-- Title -->
+  <div class="form-group">
+    <label for="title">Title:</label>
+    <input id="title" [(ngModel)]="newListing.title" name="title" required />
+  </div>
+
+  <!-- Upload Image -->
+  <div class="form-group">
+    <label for="image">Upload Image:</label>
+    <input id="image" type="file" (change)="onImageSelected($event)" required />
+  </div>
+
+  <!-- Lessons Taught -->
+  <div class="form-group">
+    <label for="lessonsTaught">Lessons Taught:</label>
+    <input id="lessonsTaught" [(ngModel)]="newListing.lessonsTaught" name="lessonsTaught" />
+  </div>
+
+  <!-- Locations -->
+  <div class="form-group">
+    <label for="locations">Locations:</label>
+    <select id="locations" [(ngModel)]="newListing.locations" name="locations" multiple>
+      <option *ngFor="let location of locationOptions" [value]="location">{{ location }}</option>
+    </select>
+  </div>
+
+  <!-- About the Lesson -->
+  <div class="form-group">
+    <label for="aboutLesson">About the Lesson:</label>
+    <textarea id="aboutLesson" [(ngModel)]="newListing.aboutLesson" name="aboutLesson"></textarea>
+  </div>
+
+  <!-- About You -->
+  <div class="form-group">
+    <label for="aboutYou">About You:</label>
+    <textarea id="aboutYou" [(ngModel)]="newListing.aboutYou" name="aboutYou"></textarea>
+  </div>
+
+  <!-- Rates -->
+  <fieldset class="form-group">
+    <legend>Rates</legend>
+    <div class="rate-fields">
+      <div>
+        <label for="hourlyRate">Hourly Rate:</label>
+        <input
+          id="hourlyRate"
+          type="number"
+          [(ngModel)]="rates.hourly"
+          name="hourlyRate"
+          placeholder="Hourly Rate"
+          required
+        />
+      </div>
+      <div>
+        <label for="fiveHoursRate">5 Hours Rate:</label>
+        <input
+          id="fiveHoursRate"
+          type="number"
+          [(ngModel)]="rates.fiveHours"
+          name="fiveHoursRate"
+          placeholder="5 Hours Rate"
+        />
+      </div>
+      <div>
+        <label for="tenHoursRate">10 Hours Rate:</label>
+        <input
+          id="tenHoursRate"
+          type="number"
+          [(ngModel)]="rates.tenHours"
+          name="tenHoursRate"
+          placeholder="10 Hours Rate"
+        />
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- Social Platforms -->
+  <div class="form-group">
+    <label for="socialPlatforms">Social Platforms:</label>
+    <select id="socialPlatforms" [(ngModel)]="newListing.socialPlatforms" name="socialPlatforms" multiple>
+      <option *ngFor="let platform of socialPlatformOptions" [value]="platform">{{ platform }}</option>
+    </select>
+  </div>
+
+  <!-- Lesson Category -->
+  <div class="form-group">
+    <label for="lessonCategory">Lesson Category:</label>
+    <select id="lessonCategory" [(ngModel)]="newListing.lessonCategoryId" name="lessonCategoryId" required>
+      <option *ngFor="let category of lessonCategories" [value]="category.id">
+        {{ category.name }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Buttons -->
+  <div class="form-actions">
+    <button type="submit" class="btn-primary">Create Listing</button>
+    <button type="button" class="btn-secondary" (click)="closeModal()">Cancel</button>
+  </div>
+</form>

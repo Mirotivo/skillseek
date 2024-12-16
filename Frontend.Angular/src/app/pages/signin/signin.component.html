@@ -1,0 +1,73 @@
+<div class="login-page">
+  <!-- Logo -->
+  <div class="logo" [routerLink]="'/'">
+    <span>S</span>
+  </div>
+  
+  <!-- Login Form -->
+  <div class="login-form">
+    <h3>Log in</h3>
+    <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <!-- Email Input -->
+      <div class="form-group">
+        <input
+          type="text"
+          id="Input_Email"
+          class="form-control"
+          placeholder="Email address"
+          name="email"
+          [(ngModel)]="loginModel.email"
+          (input)="emailInvalid = false; invalidLogin = false"
+          [ngClass]="{ 'is-invalid': emailInvalid }"
+          required
+        />
+        <span class="text-danger" *ngIf="emailInvalid">
+          Invalid email format. Please enter a valid email address.
+        </span>
+      </div>
+
+      <!-- Password Input -->
+      <div class="form-group">
+        <input
+          type="password"
+          id="Input_Password"
+          class="form-control"
+          placeholder="Password"
+          name="password"
+          [(ngModel)]="loginModel.password"
+          (input)="invalidLogin = false"
+          required
+        />
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="invalidLogin" class="alert alert-danger">
+        Invalid email or password. Please try again.
+      </div>
+
+      <!-- Login Button -->
+      <button
+        type="submit"
+        class="btn login-btn"
+        [disabled]="!isFormValid()"
+      >
+        Login
+      </button>
+    </form>
+
+    <div class="or-divider">or</div>
+
+    <!-- Alternative Login Options -->
+    <button class="btn google-login">
+      <img src="assets/google-icon.png" alt="Google" /> Log in with Google
+    </button>
+    <button class="btn apple-login">
+      <img src="assets/apple-icon.png" alt="Apple" /> Log in with Apple
+    </button>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p>Don't have an account? <a href="/signup">Sign up</a></p>
+    </div>
+  </div>
+</div>

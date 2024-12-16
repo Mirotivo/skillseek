@@ -1,0 +1,182 @@
+.listings-page {
+  display: flex;
+  gap: 20px; // Added spacing between the sidebar and main content for better layout
+
+  .sidebar {
+    width: 25%;
+    background: linear-gradient(to bottom, #ffffff, #f1f1f1);
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+
+    .create-listing-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+
+      &:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px); // Subtle hover effect for interactivity
+      }
+    }
+
+    .listings {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        padding: 15px 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+        border-radius: 5px;
+        transition: background 0.3s ease, box-shadow 0.3s ease;
+
+        &:hover {
+          background: #f0f8ff;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        &.active {
+          background: #e6f7ff;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .listing-info {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+
+          img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover; // Ensures images maintain aspect ratio
+            border: 2px solid #ddd;
+          }
+
+          .listing-details {
+            h3 {
+              margin: 0;
+              font-size: 1.1rem;
+              font-weight: 600;
+              color: #333;
+            }
+
+            .status {
+              font-size: 0.9rem;
+              color: #888;
+              margin-top: 4px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #f0f0f0;
+      padding-bottom: 10px;
+
+      h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: #333;
+      }
+
+      .premium-btn {
+        padding: 10px 15px;
+        background: linear-gradient(to right, #ff5c5c, #ff8c8c);
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+
+        &:hover {
+          background-color: #ff4040;
+          transform: translateY(-2px);
+        }
+      }
+    }
+
+    .listing-section {
+      margin-bottom: 20px;
+
+      h4 {
+        margin-bottom: 10px;
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #333;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 5px;
+      }
+
+      .location-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        span {
+          display: inline-block;
+          padding: 6px 12px;
+          background: #007bff;
+          color: #fff;
+          border-radius: 5px;
+          font-size: 0.9rem;
+          font-weight: bold;
+        }
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+
+        li {
+          font-size: 1rem;
+          margin-bottom: 10px;
+          color: #555;
+        }
+      }
+    }
+  }
+}
+
+select[multiple] {
+  height: auto;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  background: #f9f9f9;
+  transition: border-color 0.3s ease;
+
+  &:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+}

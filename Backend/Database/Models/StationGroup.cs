@@ -8,4 +8,9 @@ public class StationGroup
 
     [MaxLength(255)]
     public string Name { get; set; }
+
+    public StationGroup()
+    {
+        Name = string.Empty;
+    }
 }

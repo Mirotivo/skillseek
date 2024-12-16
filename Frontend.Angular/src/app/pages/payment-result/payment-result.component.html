@@ -1,0 +1,10 @@
+<div class="payment-result">
+    <h1 *ngIf="success">Payment Successful</h1>
+    <h1 *ngIf="!success">Payment Canceled</h1>
+  
+    <p *ngIf="success">Your subscription has been created successfully.</p>
+    <p *ngIf="!success">You have canceled the payment. Please try again if you wish to proceed.</p>
+  
+    <button *ngIf="!success" (click)="retryPayment()">Retry Payment</button>
+  </div>
+  

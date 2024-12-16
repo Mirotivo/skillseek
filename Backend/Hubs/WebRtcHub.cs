@@ -50,15 +50,15 @@ public class WebRtcHub : Hub
     {
         await Clients.Others.SendAsync("ReceiveSdpOffer", message);
     }
-    
+
     public async Task SendSdpAnswer(object message)
     {
         await Clients.Others.SendAsync("ReceiveSdpAnswer", message);
     }
 
 
-    
-    
+
+
     public async Task Login(string userName)
     {
         if (!_users.ContainsKey(userName))
@@ -92,9 +92,10 @@ public class WebRtcHub : Hub
         }
         catch (System.Exception)
         {
-            
+
         }
-        finally {
+        finally
+        {
             await base.OnConnectedAsync();
         }
     }

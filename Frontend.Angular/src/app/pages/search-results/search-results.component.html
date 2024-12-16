@@ -1,0 +1,43 @@
+<div class="search-results">
+    <div class="header-section text-center">
+      <h2>Search Results for "{{ searchQuery }}"</h2>
+    </div>
+  
+    <div *ngIf="isLoading" class="loading">
+      Loading...
+    </div>
+  
+    <div *ngIf="hasError" class="error">
+      Failed to fetch search results. Please try again later.
+    </div>
+  
+    <div *ngIf="!isLoading && !hasError && searchResults.length === 0" class="no-results">
+      No results found for "{{ searchQuery }}".
+    </div>
+  
+    <div class="results-grid" *ngIf="!isLoading && !hasError && searchResults.length > 0">
+      <div class="result-card" *ngFor="let listing of searchResults"  (click)="navigateToPayment(listing.id)">
+        <img [src]="listing.image" alt="{{ listing.title }}" />
+        <div class="result-info">
+          <h3>{{ listing.title }}</h3>
+          <p>{{ listing.aboutLesson }}</p>
+          <strong>{{ listing.rates.hourly }} per hour</strong>
+        </div>
+      </div>
+    </div>
+  
+    <div class="actions">
+      <button
+        *ngIf="searchResults.length < totalResults && !isLoadingMore"
+        class="btn btn-primary"
+        (click)="loadMoreResults()"
+      >
+        See More
+      </button>
+  
+      <div *ngIf="isLoadingMore" class="loading-more">
+        Loading more...
+      </div>
+    </div>
+  </div>
+  

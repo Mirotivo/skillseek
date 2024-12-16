@@ -9,5 +9,12 @@ public static class DbInitializer
         ProductSeeder.Seed(context);
         UserSeeder.Seed(context);
         FriendshipSeeder.Seed(context);
+
+        LessonCategorySeeder.Seed(context);
+        ListingSeeder.Seed(context);
+        LessonSeeder.Seed(context);
+        ReviewSeeder.Seed(context);
+        ChatSeeder.Seed(context);
+        MessageSeeder.Seed(context);
     }
 }

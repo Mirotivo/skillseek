@@ -48,4 +48,4 @@ jobs:
   #         username: ${{ secrets.AZURE_SERVER_USERNAME }}
   #         password: ${{ secrets.AZURE_SERVER_PASSWORD }}
   #         script: |
-  #           powershell -Command "cd C:\Server\skillseeks; Write-Host 'INFO: Navigated to C:\Server\skillseeks...'; docker compose -f docker-compose.yml pull; docker compose -f docker-compose.yml down; docker compose -f docker-compose.yml up -d;"
+  #           powershell -Command "cd C:\Server\skillseek; Write-Host 'INFO: Navigated to C:\Server\skillseek...'; docker compose -f docker-compose.yml pull; docker compose -f docker-compose.yml down; docker compose -f docker-compose.yml up -d;"

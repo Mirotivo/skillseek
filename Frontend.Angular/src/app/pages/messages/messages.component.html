@@ -1,0 +1,127 @@
+<app-header></app-header>
+<app-navigation-bar></app-navigation-bar>
+
+<div class="messages-page">
+  <!-- Sidebar -->
+  <div class="messages-sidebar">
+    <div class="contacts-header">
+      <h3>All my contacts</h3>
+      <input type="text" placeholder="Search contacts..." class="search-bar" />
+    </div>
+    <ul class="contacts-list">
+      <li *ngFor="let contact of contacts" [class.active]="contact.id === selectedContact?.id"
+        (click)="selectContact(contact)">
+        <div class="contact-avatar">
+          <span>{{ contact.name[0] }}</span>
+        </div>
+        <div class="contact-info">
+          <h4>{{ contact.name }}</h4>
+          <p>{{ contact.lastMessage }}</p>
+        </div>
+        <span class="contact-timestamp">{{ contact.timestamp }}</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Chat Section -->
+  <div class="chat-section" *ngIf="selectedContact">
+    <div class="chat-header">
+      <div class="contact-details">
+        <h3>{{ selectedContact.name }}</h3>
+        <p>{{ selectedContact.details }}</p>
+      </div>
+      <div class="banner accepted-request">
+        <p>You have accepted the request</p>
+      </div>
+    </div>
+
+    <div class="chat-messages">
+      <div *ngFor="let message of selectedContact.messages" [class.sent]="message.sentBy === 'me'"
+        [class.received]="message.sentBy !== 'me'" class="message">
+        <p>{{ message.text }}</p>
+        <span class="message-timestamp">{{ message.timestamp }}</span>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <input type="text" placeholder="Write a message..." [(ngModel)]="newMessage" />
+      <button (click)="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <!-- Placeholder when no contact is selected -->
+  <div class="no-contact-placeholder" *ngIf="!selectedContact">
+    <h3>Please select a contact to start chatting.</h3>
+  </div>
+
+  <!-- Right Sidebar -->
+  <div class="right-sidebar" *ngIf="selectedContact">
+    <!-- Tab Navigation -->
+    <div class="tabs">
+      <button class="tab" [class.active]="activeTab === 'propositions'" (click)="activeTab = 'propositions'">
+        Propositions
+      </button>
+      <button class="tab" [class.active]="activeTab === 'lessons'" (click)="activeTab = 'lessons'">
+        Lessons
+      </button>
+    </div>
+
+    <!-- Propositions Section -->
+    <div class="propositions" *ngIf="activeTab === 'propositions'">
+      <div class="propose-buttons">
+        <button class="btn propose-pack" *ngIf="selectedContact?.myRole !== 'Tutor'">
+          <span>📦 Propose a Pack</span>
+        </button>
+        <button class="btn propose-lesson" *ngIf="selectedContact?.myRole !== 'Tutor'" (click)="openModal()">
+          <span>📘 Propose a Lesson</span>
+        </button>
+      </div>
+      <div class="propositions-section" *ngIf="propositions.length > 0">
+        <h3>Propositions for {{ selectedContact.name }}</h3>
+        <ul>
+          <li *ngFor="let proposition of propositions">
+            <p><strong>Date:</strong> {{ proposition.date | date }}</p>
+            <p><strong>Duration:</strong> {{ proposition.duration }}</p>
+            <p><strong>Price:</strong> ${{ proposition.price }}</p>
+            <p><strong>Status:</strong> {{ proposition.status }}</p>
+            <div class="proposition-actions">
+              <!-- Accept Button -->
+              <button class="accept-btn" (click)="respondToProposition(proposition.id, true)">
+                Accept
+              </button>
+              <!-- Refuse Button -->
+              <button class="refuse-btn" (click)="respondToProposition(proposition.id, false)">
+                Refuse
+              </button>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="no-propositions" *ngIf="propositions.length === 0">
+        <p>No propositions pending.</p>
+      </div>
+    </div>
+
+    <!-- Lessons Section -->
+    <div class="lessons" *ngIf="activeTab === 'lessons'">
+      <ul>
+        <li *ngFor="let lesson of lessons">
+          <p><strong>Topic:</strong> {{ lesson.topic }}</p>
+          <p><strong>Date:</strong> {{ lesson.date | date }}</p>
+          <p><strong>Duration:</strong> {{ lesson.duration }}</p>
+          <p><strong>Status:</strong> {{ lesson.status }}</p>
+        </li>
+      </ul>
+      <div class="no-lessons" *ngIf="lessons.length === 0">
+        <p>No lessons scheduled.</p>
+      </div>
+    </div>
+
+
+
+  </div>
+</div>
+<app-modal *ngIf="isModalOpen" [isOpen]="isModalOpen" (onClose)="closeModal()">
+  <app-propose-lesson [listing]="selectedListing" [studentId]="selectedContact?.studentId ?? null"
+    (onPropose)="handleProposeLesson($event)" (onClose)="closeModal()"></app-propose-lesson>
+</app-modal>

@@ -1,0 +1,49 @@
+<div class="header-container">
+  <!-- Logo -->
+  <div class="logo">
+    <a href="/" class="logo-link">superprof</a>
+  </div>
+
+  <!-- Right Side Menu -->
+  <div class="header-menu">
+    <ng-container *ngIf="isLoggedIn(); else guestMenu">
+      <!-- <div class="role-switcher" *ngIf="hasMultipleRoles()">
+        Logged in as:
+        <button
+          class="role-button"
+          [class.active]="currentRole === 'student'"
+          (click)="switchRole('student')">
+          Student
+        </button>
+        <button
+          class="role-button"
+          [class.active]="currentRole === 'tutor'"
+          (click)="switchRole('tutor')">
+          Tutor
+        </button>
+      </div> -->
+      
+      <button class="profile-btn" (click)="toggleMenu()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24px" height="24px">
+          <path d="M3 6h18v2H3zM3 11h18v2H3zM3 16h18v2H3z" />
+        </svg>
+      </button>
+      <div *ngIf="isMenuOpen" class="dropdown-menu">
+        <a href="/dashboard">My Dashboard</a>
+        <a href="/messages">Messages</a>
+        <a href="/listings">My Listings</a>
+        <a href="/profile">My Profile</a>
+        <a href="/premium">Premium</a>
+        <a (click)="logout()">Log Out</a>
+      </div>
+    </ng-container>
+
+    <!-- Guest Menu -->
+    <ng-template #guestMenu>
+      <div class="guest-menu">
+        <a href="/signup">Register</a>
+        <a href="/signin">Login</a>
+      </div>
+    </ng-template>
+  </div>
+</div>

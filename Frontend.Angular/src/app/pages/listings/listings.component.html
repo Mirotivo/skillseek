@@ -1,0 +1,72 @@
+<app-header></app-header>
+<app-navigation-bar></app-navigation-bar>
+<div class="landing-page">
+  <div class="listings-page">
+    <!-- Sidebar -->
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <button class="create-listing-btn" (click)="openModal()">Create a Listing</button>
+      <ul class="listings">
+        <li *ngFor="let listing of listings" [class.active]="listing?.id === selectedListing?.id"
+          (click)="selectListing(listing)">
+          <div class="listing-info">
+            <img [src]="listing.image" alt="{{ listing.title }}" />
+            <div class="listing-details">
+              <h3>{{ listing.title }}</h3>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" *ngIf="selectedListing">
+      <div class="header">
+        <h2>{{ selectedListing.title }}</h2>
+        <button class="premium-btn">Go premium</button>
+      </div>
+
+      <div class="listing-section">
+        <h4>Lessons taught</h4>
+        <p>{{ selectedListing.lessonsTaught }}</p>
+      </div>
+
+      <div class="listing-section">
+        <h4>Location</h4>
+        <div class="location-options">
+          <span *ngFor="let location of selectedListing.locations">{{ location }}</span>
+        </div>
+      </div>
+
+      <div class="listing-section">
+        <h4>About the Lesson</h4>
+        <p>{{ selectedListing.aboutLesson }}</p>
+      </div>
+
+      <div class="listing-section">
+        <h4>About You</h4>
+        <p>{{ selectedListing.aboutYou }}</p>
+      </div>
+
+      <div class="listing-section">
+        <h4>Rates</h4>
+        <ul>
+          <li>Hourly rate: {{ selectedListing.rates.hourly }}</li>
+          <li>5 hours: {{ selectedListing.rates.fiveHours }}</li>
+          <li>10 hours: {{ selectedListing.rates.tenHours }}</li>
+        </ul>
+      </div>
+
+      <div class="listing-section">
+        <h4>Recommendations</h4>
+        <div class="recommendations">
+          <span *ngFor="let platform of selectedListing.socialPlatforms">{{ platform }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Create Listing -->
+  <app-modal *ngIf="isModalOpen" [isOpen]="isModalOpen" (onClose)="closeModal()">
+    <app-create-listing (onClose)="closeModal()"></app-create-listing>
+  </app-modal>

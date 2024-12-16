@@ -1,0 +1,48 @@
+<div class="booking-page" *ngIf="!loading; else loadingTemplate">
+  <!-- Back Button -->
+  <button class="back-button" (click)="goBack()">←</button>
+
+  <!-- Tutor Details Section -->
+  <div class="tutor-section">
+    <img [src]="listing.image" alt="{{ listing.name }}" class="tutor-image" />
+    <div class="tutor-info">
+      <h2>{{ listing.name }}</h2>
+      <p><strong>Category:</strong> {{ listing.category }}</p>
+      <p><strong>Title:</strong> {{ listing.title }}</p>
+      <p><strong>Rate:</strong> {{ listing.rates.hourly }}</p>
+    </div>
+  </div>
+
+  <!-- About Lesson and You Section -->
+  <div class="details-section">
+    <h3>About the Lesson</h3>
+    <p>{{ listing.aboutLesson }}</p>
+
+    <h3>About the Tutor</h3>
+    <p>{{ listing.aboutYou }}</p>
+  </div>
+
+  <!-- Message Section -->
+  <div class="message-section" *ngIf="showMessageSection">
+    <h3>Send a Message to {{ listing.name }}</h3>
+    <textarea
+      rows="4"
+      placeholder="Write your message here..."
+      [(ngModel)]="newMessage"
+    ></textarea>
+    <button class="btn btn-primary" (click)="sendMessage()">Send Message</button>
+    <p *ngIf="messageSuccess" class="success-message">
+      Your message has been sent!
+    </p>
+  </div>
+
+  <!-- Propose a Lesson Section -->
+  <div class="propose-lesson-section" *ngIf="!showMessageSection">
+    <app-propose-lesson [listing]="listing" [studentId]="0" (onPropose)="handleProposeLesson()"></app-propose-lesson>
+  </div>
+</div>
+
+<!-- Loading Template -->
+<ng-template #loadingTemplate>
+  <div class="loading">Loading tutor details...</div>
+</ng-template>
